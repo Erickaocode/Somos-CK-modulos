@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fichário Inteligente — Administração</title>
+<link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+
+<div class="admin-shell">
+  <div class="admin-sidebar">
+    <span class="logo-dot"></span>
+    <h2>Fichário Inteligente<br /><small style="opacity:.6;">Área administrativa</small></h2>
+    <nav class="admin-nav">
+      <a href="index.html" class="active">Jovens &amp; Respostas</a>
+      <a href="../index.html">← Voltar à área do jovem</a>
+    </nav>
+  </div>
+
+  <div class="admin-main">
+    <div class="admin-header">
+      <div>
+        <h1>Jovens e respostas dos módulos</h1>
+        <p>Acompanhe o progresso de cada jovem e revise as respostas enviadas.</p>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="valor" id="stat-total-jovens">0</div>
+        <div class="rotulo">Jovens participantes</div>
+      </div>
+      <div class="stat-card">
+        <div class="valor" id="stat-total-respostas">0</div>
+        <div class="rotulo">Respostas enviadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="valor" id="stat-completos">0</div>
+        <div class="rotulo">Concluíram todos os módulos</div>
+      </div>
+    </div>
+
+    <input type="text" class="busca" id="busca" placeholder="Buscar por nome..." />
+
+    <table class="tabela-jovens">
+      <thead>
+        <tr>
+          <th>Jovem</th>
+          <th>CPF</th>
+          <th>Progresso</th>
+          <th>Última resposta</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="corpo-tabela"></tbody>
+    </table>
+
+    <p class="aviso-demo">
+      Protótipo de layout — os dados acima ficam salvos apenas no navegador (localStorage), sem autenticação real. Veja o README para os próximos passos de integração com um back-end.
+    </p>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-detalhe">
+  <div class="modal">
+    <div class="modal-topo">
+      <div>
+        <h2 id="detalhe-nome">—</h2>
+        <p id="detalhe-cpf">—</p>
+      </div>
+      <button class="fechar-modal" id="fechar-detalhe">×</button>
+    </div>
+    <div id="detalhe-respostas"></div>
+  </div>
+</div>
+
+<script src="../assets/app.js"></script>
+<script>
+  let jovens = obterJovensUnicos();
+
+  function totalModulos() { return MODULOS.length; }
+
+  function renderStats() {
+    document.getElementById("stat-total-jovens").textContent = jovens.length;
+    const totalRespostas = jovens.reduce((soma, j) => soma + j.respostas.length, 0);
+    document.getElementById("stat-total-respostas").textContent = totalRespostas;
+    const completos = jovens.filter((j) => j.respostas.length >= totalModulos()).length;
+    document.getElementById("stat-completos").textContent = completos;
+  }
+
+  function renderTabela(filtro = "") {
+    const corpo = document.getElementById("corpo-tabela");
+    const filtrados = jovens.filter((j) => j.nome.toLowerCase().includes(filtro.toLowerCase()));
+
+    if (filtrados.length === 0) {
+      corpo.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--cinza-400); padding: 24px;">Nenhum jovem encontrado ainda.</td></tr>`;
+      return;
+    }
+
+    corpo.innerHTML = filtrados.map((j) => {
+      const total = totalModulos();
+      const feitos = j.respostas.length;
+      const completo = feitos >= total;
+      const ultima = j.respostas.slice().sort((a, b) => new Date(b.data) - new Date(a.data))[0];
+      return `
+        <tr>
+          <td style="font-weight:600;">${j.nome}</td>
+          <td>${mascararCPF(j.cpf)}</td>
+          <td><span class="badge-progresso ${completo ? "completo" : ""}">${feitos}/${total} módulos</span></td>
+          <td>${ultima ? formatarData(ultima.data) : "—"}</td>
+          <td><button class="btn btn-secundario btn-pequeno" data-ver="${j.cpf}">Ver respostas</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    corpo.querySelectorAll("[data-ver]").forEach((btn) => {
+      btn.addEventListener("click", () => abrirDetalhe(btn.getAttribute("data-ver")));
+    });
+  }
+
+  function abrirDetalhe(cpf) {
+    const jovem = jovens.find((j) => j.cpf === cpf);
+    if (!jovem) return;
+
+    document.getElementById("detalhe-nome").textContent = jovem.nome;
+    document.getElementById("detalhe-cpf").textContent = mascararCPF(jovem.cpf);
+
+    const respostasOrdenadas = jovem.respostas.slice().sort((a, b) => new Date(b.data) - new Date(a.data));
+    document.getElementById("detalhe-respostas").innerHTML = respostasOrdenadas.map((r) => {
+      const modulo = MODULOS.find((m) => m.id === r.moduloId);
+      return `
+        <div class="resposta-admin-item">
+          <div class="modulo">${modulo ? modulo.titulo : r.moduloId}</div>
+          <div class="data">${formatarData(r.data)}</div>
+          <div class="texto">${r.resposta}</div>
+        </div>
+      `;
+    }).join("");
+
+    document.getElementById("overlay-detalhe").classList.add("visivel");
+  }
+
+  document.getElementById("fechar-detalhe").addEventListener("click", () => {
+    document.getElementById("overlay-detalhe").classList.remove("visivel");
+  });
+  document.getElementById("overlay-detalhe").addEventListener("click", (e) => {
+    if (e.target.id === "overlay-detalhe") e.currentTarget.classList.remove("visivel");
+  });
+
+  document.getElementById("busca").addEventListener("input", (e) => {
+    renderTabela(e.target.value);
+  });
+
+  renderStats();
+  renderTabela();
+</script>
+
+</body>
+</html>

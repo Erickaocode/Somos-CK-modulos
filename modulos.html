@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fichário Inteligente — Meus Módulos</title>
+<link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <span class="logo-dot"></span>
+    Fichário Inteligente
+  </div>
+  <div class="topbar-nav">
+    <a href="#" class="active">Meus Módulos</a>
+  </div>
+  <div class="topbar-user">
+    <span id="nome-usuario">—</span>
+    <span class="avatar" id="avatar-usuario">--</span>
+    <button class="btn btn-ghost btn-pequeno" id="btn-sair">Sair</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="hero">
+    <span class="tag">Programa de Aprendizagem</span>
+    <h1>Eu do Futuro</h1>
+    <p>Responda os módulos abaixo no seu ritmo. Suas respostas ficam salvas e você pode revisar o histórico a qualquer momento no painel ao lado.</p>
+  </div>
+
+  <div class="layout-duas-colunas">
+    <div class="card" id="lista-modulos">
+      <!-- módulos injetados via JS -->
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom: 18px;">
+        <div class="progresso-wrap">
+          <div class="progresso-texto" id="texto-progresso">0 de 0 módulos concluídos</div>
+          <div class="progresso-barra" style="margin-top:8px;">
+            <div class="progresso-preenchimento" id="barra-progresso" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sidebar-titulo">Histórico de respostas</div>
+        <div id="lista-historico">
+          <!-- histórico injetado via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  const sessao = obterSessao();
+  if (!sessao) {
+    window.location.href = "index.html";
+  }
+
+  document.getElementById("nome-usuario").textContent = sessao.nome;
+  document.getElementById("avatar-usuario").textContent = iniciaisNome(sessao.nome);
+
+  document.getElementById("btn-sair").addEventListener("click", () => {
+    encerrarSessao();
+    window.location.href = "index.html";
+  });
+
+  function respostaDoModulo(moduloId) {
+    return obterRespostasDoJovem(sessao.cpf).find((r) => r.moduloId === moduloId);
+  }
+
+  function renderModulos() {
+    const container = document.getElementById("lista-modulos");
+    container.innerHTML = "";
+
+    MODULOS.forEach((modulo, index) => {
+      const respostaExistente = respostaDoModulo(modulo.id);
+      const concluido = !!respostaExistente;
+
+      const item = document.createElement("div");
+      item.className = "modulo-item";
+      item.innerHTML = `
+        <div class="modulo-cabecalho">
+          <div>
+            <div class="modulo-titulo-linha">
+              <span class="badge-numero ${concluido ? "concluido" : ""}">${concluido ? "✓" : index + 1}</span>
+              <span class="modulo-titulo">${modulo.titulo}</span>
+            </div>
+            <div class="modulo-desc">${modulo.descricao}</div>
+          </div>
+          <span class="status-pill ${concluido ? "status-concluido" : "status-pendente"}">
+            ${concluido ? "Concluído" : "Pendente"}
+          </span>
+        </div>
+        <div class="modulo-corpo">
+          <p style="font-size:13.5px; font-weight:600; margin: 0 0 8px;">${modulo.pergunta}</p>
+          ${
+            concluido
+              ? `<div class="resposta-salva">${escaparTexto(respostaExistente.resposta)}</div>
+                 <button class="btn btn-secundario btn-pequeno" style="margin-top:10px;" data-editar="${modulo.id}">Editar resposta</button>`
+              : `<textarea placeholder="Escreva sua resposta..." data-resposta="${modulo.id}"></textarea>
+                 <button class="btn btn-primario btn-pequeno" style="margin-top:10px;" data-salvar="${modulo.id}">Salvar resposta</button>`
+          }
+        </div>
+      `;
+
+      item.querySelector(".modulo-cabecalho").addEventListener("click", () => {
+        item.classList.toggle("aberto");
+      });
+
+      container.appendChild(item);
+    });
+
+    // Salvar nova resposta
+    container.querySelectorAll("[data-salvar]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const moduloId = btn.getAttribute("data-salvar");
+        const textarea = container.querySelector(`[data-resposta="${moduloId}"]`);
+        const texto = textarea.value.trim();
+        if (!texto) {
+          textarea.focus();
+          return;
+        }
+        salvarResposta({ nome: sessao.nome, cpf: sessao.cpf, moduloId, resposta: texto });
+        renderModulos();
+        renderHistorico();
+        renderProgresso();
+      });
+    });
+
+    // Reabrir edição
+    container.querySelectorAll("[data-editar]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const moduloId = btn.getAttribute("data-editar");
+        const resposta = respostaDoModulo(moduloId);
+        const corpo = btn.closest(".modulo-corpo");
+        corpo.innerHTML = `
+          <p style="font-size:13.5px; font-weight:600; margin: 0 0 8px;">${MODULOS.find(m => m.id === moduloId).pergunta}</p>
+          <textarea data-resposta="${moduloId}">${escaparTexto(resposta.resposta)}</textarea>
+          <button class="btn btn-primario btn-pequeno" style="margin-top:10px;" data-salvar="${moduloId}">Salvar resposta</button>
+        `;
+        corpo.querySelector("[data-salvar]").addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const textarea = corpo.querySelector(`[data-resposta="${moduloId}"]`);
+          const texto = textarea.value.trim();
+          if (!texto) return;
+          salvarResposta({ nome: sessao.nome, cpf: sessao.cpf, moduloId, resposta: texto });
+          renderModulos();
+          renderHistorico();
+          renderProgresso();
+        });
+      });
+    });
+  }
+
+  function renderHistorico() {
+    const historico = obterRespostasDoJovem(sessao.cpf);
+    const container = document.getElementById("lista-historico");
+
+    if (historico.length === 0) {
+      container.innerHTML = `<div class="vazio">Suas respostas aparecerão aqui assim que você concluir o primeiro módulo.</div>`;
+      return;
+    }
+
+    container.innerHTML = historico.map((r) => {
+      const modulo = MODULOS.find((m) => m.id === r.moduloId);
+      return `
+        <div class="historico-item">
+          <div class="historico-modulo">${modulo ? modulo.titulo : r.moduloId}</div>
+          <div class="historico-data">${formatarData(r.data)}</div>
+          <div class="historico-trecho">${escaparTexto(r.resposta)}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderProgresso() {
+    const total = MODULOS.length;
+    const concluidos = obterRespostasDoJovem(sessao.cpf).length;
+    const pct = total ? Math.round((concluidos / total) * 100) : 0;
+    document.getElementById("texto-progresso").textContent = `${concluidos} de ${total} módulos concluídos`;
+    document.getElementById("barra-progresso").style.width = pct + "%";
+  }
+
+  function escaparTexto(texto) {
+    const div = document.createElement("div");
+    div.textContent = texto;
+    return div.innerHTML;
+  }
+
+  renderModulos();
+  renderHistorico();
+  renderProgresso();
+</script>
+
+</body>
+</html>
