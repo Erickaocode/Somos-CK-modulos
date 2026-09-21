@@ -7,7 +7,7 @@ import AtoHeader from '../components/AtoHeader';
 import HistoricoLista from '../components/HistoricoLista';
 import BarraProgresso from '../components/BarraProgresso';
 import { ATOS, MODULOS } from '../data/modulos';
-import { atoBloqueado, progressoDoAto } from '../lib/atos';
+import { atoBloqueado, moduloBloqueado, progressoDoAto } from '../lib/atos';
 import { encerrarSessao, obterRespostasDoJovem, obterSessao, salvarResposta } from '../lib/storage';
 import type { Sessao } from '../types';
 
@@ -60,7 +60,7 @@ export default function ModulosPage() {
                 <div key={ato.id}>
                   <AtoHeader titulo={ato.titulo} bloqueado={bloqueado} progresso={progresso} />
                   {MODULOS.filter((modulo) => modulo.atoId === ato.id).map((modulo) =>
-                    bloqueado ? (
+                    moduloBloqueado(modulo, MODULOS, historico, bloqueado) ? (
                       <ModuloBloqueado
                         key={modulo.id}
                         titulo={modulo.titulo}

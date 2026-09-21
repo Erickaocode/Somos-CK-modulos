@@ -22,3 +22,25 @@ export function atoBloqueado(indice: number, atos: Ato[], modulos: Modulo[], his
   }
   return false;
 }
+
+/**
+ * Um módulo fica bloqueado se o ato dele estiver bloqueado, ou se algum
+ * módulo anterior do MESMO ato ainda não tiver sido respondido — os
+ * módulos de um ato são liberados em sequência.
+ */
+export function moduloBloqueado(
+  modulo: Modulo,
+  modulos: Modulo[],
+  historico: Resposta[],
+  atoDoModuloBloqueado: boolean,
+): boolean {
+  if (atoDoModuloBloqueado) return true;
+
+  const modulosDoAto = modulos.filter((m) => m.atoId === modulo.atoId);
+  const indice = modulosDoAto.findIndex((m) => m.id === modulo.id);
+
+  for (let i = 0; i < indice; i++) {
+    if (!historico.some((r) => r.moduloId === modulosDoAto[i].id)) return true;
+  }
+  return false;
+}
