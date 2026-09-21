@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { cpfValido, formatarCPF } from '../lib/cpf';
 import { obterSessao, salvarSessao, semearDadosDemo } from '../lib/storage';
 
@@ -73,10 +73,6 @@ export default function IdentificacaoPage() {
             Começar módulos
           </button>
         </form>
-
-        <Link to="/admin" className="link-admin">
-          Sou administrador(a) →
-        </Link>
       </div>
     </div>
   );

@@ -263,18 +263,6 @@ button {
   cursor: not-allowed;
 }
 
-.link-admin {
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  font-size: 12.5px;
-  color: var(--cinza-400);
-}
-
-.link-admin:hover {
-  color: var(--roxo-700);
-}
-
 /* ---------- Banner / hero ---------- */
 .hero {
   border-radius: var(--raio);

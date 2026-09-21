@@ -14,8 +14,8 @@ Aplicação do fluxo de módulos do programa de aprendizagem/estágio, em **Reac
    um, e um botão "Ver respostas" que abre um modal com todas as respostas
    daquele jovem, módulo a módulo.
 
-Um link discreto "Sou administrador(a) →" na tela de identificação leva para
-`/admin`.
+A área administrativa não tem link visível na tela de identificação — é
+acessada diretamente pela rota `/admin`.
 
 ## Stack
 
