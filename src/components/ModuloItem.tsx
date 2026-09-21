@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import type { Modulo, Resposta, RespostaDesejos, RespostaRodaVida } from '../types';
+import type { Modulo, Resposta, RespostaDesejos, RespostaFormulario, RespostaRodaVida } from '../types';
 import { serializarDesejos, tentarParsearDesejos } from '../lib/desejos';
 import { serializarRodaVida, tentarParsearRodaVida } from '../lib/rodaVida';
+import { serializarFormulario, tentarParsearFormulario } from '../lib/formularioGenerico';
 import ListaDesejosForm from './ListaDesejosForm';
 import ListaDesejosResumo from './ListaDesejosResumo';
 import RodaVidaForm from './RodaVidaForm';
 import RodaVidaResumo from './RodaVidaResumo';
+import FormularioGenericoForm from './FormularioGenericoForm';
+import FormularioGenericoResumo from './FormularioGenericoResumo';
 
 interface ModuloItemProps {
   modulo: Modulo;
@@ -43,6 +46,11 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
     setEditando(false);
   }
 
+  function salvarFormulario(dados: RespostaFormulario) {
+    onSalvar(modulo.id, serializarFormulario(dados));
+    setEditando(false);
+  }
+
   function renderCorpo() {
     if (modulo.tipo === 'lista-desejos') {
       if (concluido && !editando) {
@@ -77,6 +85,25 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
           areas={modulo.areasRodaVida}
           valorInicial={respostaExistente ? (tentarParsearRodaVida(respostaExistente.resposta) ?? undefined) : undefined}
           onSalvar={salvarRodaVida}
+        />
+      );
+    }
+
+    if (modulo.tipo === 'formulario') {
+      if (concluido && !editando) {
+        const dados = respostaExistente && tentarParsearFormulario(respostaExistente.resposta);
+        return dados ? (
+          <FormularioGenericoResumo dados={dados} campos={modulo.campos} incluirModalidade={modulo.incluirModalidade} />
+        ) : (
+          <div className="resposta-salva">{respostaExistente!.resposta}</div>
+        );
+      }
+      return (
+        <FormularioGenericoForm
+          campos={modulo.campos}
+          incluirModalidade={modulo.incluirModalidade}
+          valorInicial={respostaExistente ? (tentarParsearFormulario(respostaExistente.resposta) ?? undefined) : undefined}
+          onSalvar={salvarFormulario}
         />
       );
     }

@@ -3,8 +3,10 @@ import { mascararCPF } from '../../lib/cpf';
 import { formatarData } from '../../lib/format';
 import { tentarParsearDesejos } from '../../lib/desejos';
 import { tentarParsearRodaVida } from '../../lib/rodaVida';
+import { tentarParsearFormulario } from '../../lib/formularioGenerico';
 import ListaDesejosResumo from '../ListaDesejosResumo';
 import RodaVidaResumo from '../RodaVidaResumo';
+import FormularioGenericoResumo from '../FormularioGenericoResumo';
 
 interface DetalheModalProps {
   jovem: Jovem | null;
@@ -21,6 +23,11 @@ function renderResposta(r: Resposta, modulo: Modulo | undefined) {
   if (modulo?.tipo === 'roda-vida') {
     const dados = tentarParsearRodaVida(r.resposta);
     if (dados) return <RodaVidaResumo dados={dados} dimensoes={modulo.dimensoesRodaVida} areas={modulo.areasRodaVida} />;
+  }
+
+  if (modulo?.tipo === 'formulario') {
+    const dados = tentarParsearFormulario(r.resposta);
+    if (dados) return <FormularioGenericoResumo dados={dados} campos={modulo.campos} incluirModalidade={modulo.incluirModalidade} />;
   }
 
   return <div className="texto">{r.resposta}</div>;

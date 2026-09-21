@@ -38,6 +38,27 @@ export const MODULOS: Modulo[] = [
     areasRodaVida: AREAS_RODA_VIDA,
   },
   {
+    id: 'alavancagem-roda-vida',
+    atoId: 'ato-1',
+    titulo: 'Alavancagem da Roda da Vida - Eu no Futuro',
+    descricao: 'Reflexão sobre a Roda da Vida completa e escolha de um foco estratégico de desenvolvimento.',
+    pergunta: 'Agora que você já avaliou as 12 áreas, vamos refletir sobre o que aprendeu e definir um foco.',
+    tipo: 'formulario',
+    incluirModalidade: true,
+    campos: [
+      { id: 'aprendizados', label: 'Aprendizados da Roda completa', tipo: 'texto' },
+      { id: 'nota-surpreendeu', label: 'Nota que te surpreendeu', tipo: 'texto' },
+      {
+        id: 'area-foco',
+        label: 'Qual área você escolheu para focar',
+        tipo: 'select',
+        opcoes: AREAS_RODA_VIDA.map((area) => area.titulo),
+      },
+      { id: 'comentario-escolha', label: 'Comentário sobre a escolha', tipo: 'texto' },
+      { id: 'primeiro-passo', label: 'Primeiro passo concreto', tipo: 'texto' },
+    ],
+  },
+  {
     id: 'postura-profissional',
     atoId: 'ato-2',
     titulo: 'Ética e Postura Profissional',

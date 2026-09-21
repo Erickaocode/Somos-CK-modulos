@@ -2,6 +2,7 @@ import type { Modulo, Resposta } from '../types';
 import { formatarData } from '../lib/format';
 import { contarSonhosPreenchidos, tentarParsearDesejos } from '../lib/desejos';
 import { areasPreenchidas, mediaGeral, tentarParsearRodaVida } from '../lib/rodaVida';
+import { tentarParsearFormulario } from '../lib/formularioGenerico';
 
 interface HistoricoListaProps {
   historico: Resposta[];
@@ -23,6 +24,13 @@ function trechoDaResposta(r: Resposta, modulo: Modulo | undefined): string {
       const preenchidas = `${areasPreenchidas(dados)} de ${modulo.areasRodaVida.length} áreas avaliadas`;
       return media !== null ? `${preenchidas} · nota média ${media}` : preenchidas;
     }
+  }
+
+  if (modulo?.tipo === 'formulario') {
+    const dados = tentarParsearFormulario(r.resposta);
+    const areaFoco = dados?.valores['area-foco'];
+    if (dados && areaFoco) return `Foco escolhido: ${areaFoco}`;
+    if (dados) return `${modulo.campos.length} campos preenchidos`;
   }
 
   return r.resposta;

@@ -43,7 +43,20 @@ export interface ModuloRodaVida extends ModuloBase {
   areasRodaVida: AreaRodaVida[];
 }
 
-export type Modulo = ModuloTexto | ModuloListaDesejos | ModuloRodaVida;
+export interface CampoFormulario {
+  id: string;
+  label: string;
+  tipo: 'texto' | 'select';
+  opcoes?: string[];
+}
+
+export interface ModuloFormulario extends ModuloBase {
+  tipo: 'formulario';
+  incluirModalidade?: boolean;
+  campos: CampoFormulario[];
+}
+
+export type Modulo = ModuloTexto | ModuloListaDesejos | ModuloRodaVida | ModuloFormulario;
 
 export interface RespostaCategoriaDesejo {
   sonhos: string;
@@ -64,6 +77,11 @@ export interface RespostaAreaRodaVida {
 export interface RespostaRodaVida {
   modalidade: string;
   areas: Record<string, RespostaAreaRodaVida>;
+}
+
+export interface RespostaFormulario {
+  modalidade: string;
+  valores: Record<string, string>;
 }
 
 export interface Resposta {
