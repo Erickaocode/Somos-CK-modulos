@@ -1,12 +1,14 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import IdentificacaoPage from './pages/IdentificacaoPage';
+
 function App() {
   return (
-    <div className="tela-central">
-      <div className="painel-identificacao">
-        <span className="logo-dot" />
-        <h1>Fichário Inteligente</h1>
-        <p className="sub">Migração para React + TypeScript em andamento.</p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<IdentificacaoPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
