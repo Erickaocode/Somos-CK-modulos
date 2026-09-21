@@ -271,14 +271,14 @@ button {
 .mapa-mental {
   border-radius: var(--raio);
   background: linear-gradient(135deg, var(--roxo-700), var(--roxo-900));
-  padding: 30px 20px;
+  padding: 22px 20px;
   margin-bottom: 22px;
 }
 
 .mapa-radial {
   position: relative;
   width: 100%;
-  max-width: 640px;
+  max-width: 480px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
@@ -311,8 +311,8 @@ button {
   background: var(--branco);
   color: var(--roxo-900);
   font-weight: 800;
-  font-size: 16px;
-  padding: 14px 26px;
+  font-size: 14px;
+  padding: 11px 22px;
   border-radius: 100px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
@@ -332,8 +332,8 @@ button {
   background: rgba(255, 255, 255, 0.14);
   border: none;
   border-radius: 14px;
-  padding: 9px 12px;
-  width: 130px;
+  padding: 8px 10px;
+  width: 112px;
   color: var(--branco);
   cursor: pointer;
   font-family: inherit;
@@ -394,13 +394,13 @@ button {
   background: var(--branco);
   border: none;
   border-radius: 20px;
-  padding: 7px 13px;
+  padding: 6px 11px;
   font-family: inherit;
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .mapa-chip--orbita {
@@ -439,7 +439,7 @@ button {
 }
 
 .mapa-chip--orbita .mapa-chip-titulo {
-  max-width: 82px;
+  max-width: 68px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
