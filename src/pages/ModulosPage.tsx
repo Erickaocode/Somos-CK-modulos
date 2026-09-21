@@ -10,17 +10,14 @@ import type { Sessao } from '../types';
 
 export default function ModulosPage() {
   const navigate = useNavigate();
-  const [sessao, setSessao] = useState<Sessao | null>(null);
+  const [sessao] = useState<Sessao | null>(() => obterSessao());
   const [, forcarAtualizacao] = useState(0);
 
   useEffect(() => {
-    const atual = obterSessao();
-    if (!atual) {
+    if (!sessao) {
       navigate('/', { replace: true });
-      return;
     }
-    setSessao(atual);
-  }, [navigate]);
+  }, [sessao, navigate]);
 
   if (!sessao) return null;
 
