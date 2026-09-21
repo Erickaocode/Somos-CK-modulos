@@ -32,7 +32,7 @@ export const MODULOS: Modulo[] = [
   {
     id: 'plano-carreira',
     atoId: 'ato-3',
-    titulo: 'Meu Plano de Carreira',
+    titulo: 'Plano de vida',
     descricao: 'Primeiros passos para pensar sua trajetória profissional a partir do estágio ou aprendizagem.',
     pergunta: 'Onde você se imagina profissionalmente daqui a 2 anos?',
   },
