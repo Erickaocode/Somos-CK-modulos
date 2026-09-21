@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { Modulo, Resposta } from '../types';
 import { ATOS, MODULOS } from '../data/modulos';
-import { atoBloqueado, moduloBloqueado, progressoDoAto } from '../lib/atos';
 import { trechoResposta } from '../lib/resumoResposta';
 import RespostaModal from './RespostaModal';
 
@@ -14,60 +13,66 @@ interface SelecaoModulo {
   resposta: Resposta;
 }
 
+function posicaoOrbital(indice: number, total: number, raio: number) {
+  const angulo = (indice / total) * 2 * Math.PI - Math.PI / 2;
+  return {
+    x: 50 + raio * Math.cos(angulo),
+    y: 50 + raio * Math.sin(angulo),
+  };
+}
+
 export default function MapaMental({ historico }: MapaMentalProps) {
   const [selecao, setSelecao] = useState<SelecaoModulo | null>(null);
 
+  const concluidos = MODULOS.map((modulo) => {
+    const resposta = historico.find((r) => r.moduloId === modulo.id);
+    return resposta ? { modulo, resposta } : null;
+  }).filter((item): item is SelecaoModulo => item !== null);
+
+  const total = concluidos.length;
+  const raio = Math.min(38, 20 + total * 3);
+  const tamanhoContainer = Math.min(580, 260 + total * 40);
+
   return (
     <div className="mapa-mental">
-      <div className="mapa-centro-wrap">
-        <div className="mapa-centro">Seu Mapa</div>
-      </div>
+      {total === 0 ? (
+        <div className="mapa-radial mapa-radial--vazio">
+          <div className="mapa-centro mapa-centro--estatico">Seu Mapa</div>
+          <p className="mapa-radial-dica">
+            Seu mapa vai se formar aqui conforme você for concluindo os módulos.
+          </p>
+        </div>
+      ) : (
+        <div className="mapa-radial" style={{ maxWidth: tamanhoContainer }}>
+          <svg className="mapa-linhas" viewBox="0 0 100 100">
+            {concluidos.map(({ modulo }, indice) => {
+              const { x, y } = posicaoOrbital(indice, total, raio);
+              return <line key={modulo.id} x1={50} y1={50} x2={x} y2={y} />;
+            })}
+          </svg>
 
-      <div className="mapa-ramos">
-        {ATOS.map((ato, indice) => {
-          const bloqueadoAto = atoBloqueado(indice, ATOS, MODULOS, historico);
-          const progresso = progressoDoAto(ato, MODULOS, historico);
-          const modulosDoAto = MODULOS.filter((m) => m.atoId === ato.id);
+          <div className="mapa-centro">Seu Mapa</div>
 
-          return (
-            <div className="mapa-ramo" key={ato.id}>
-              <div className={`mapa-no mapa-no-ato${bloqueadoAto ? ' bloqueado' : ''}`}>
-                <div className="mapa-no-titulo">{ato.titulo}</div>
-                <span className="mapa-no-tag">
-                  {bloqueadoAto ? '🔒 Bloqueado' : progresso.total > 0 ? `${progresso.concluidos}/${progresso.total}` : 'Em breve'}
-                </span>
-              </div>
+          {concluidos.map(({ modulo, resposta }, indice) => {
+            const { x, y } = posicaoOrbital(indice, total, raio);
+            const ato = ATOS.find((a) => a.id === modulo.atoId);
 
-              {modulosDoAto.length > 0 && (
-                <div className="mapa-ramos mapa-ramos--modulos">
-                  {modulosDoAto.map((modulo) => {
-                    const resposta = historico.find((r) => r.moduloId === modulo.id);
-                    const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, bloqueadoAto);
-                    const concluido = !!resposta;
-
-                    return (
-                      <div className="mapa-ramo" key={modulo.id}>
-                        <button
-                          type="button"
-                          className={`mapa-no mapa-no-modulo${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
-                          disabled={bloqueadoModulo || !concluido}
-                          title={bloqueadoModulo ? 'Conclua os módulos anteriores para desbloquear.' : undefined}
-                          onClick={() => resposta && setSelecao({ modulo, resposta })}
-                        >
-                          <div className="mapa-no-titulo">{modulo.titulo}</div>
-                          <div className="mapa-no-trecho">
-                            {bloqueadoModulo ? '🔒 Bloqueado' : concluido ? trechoResposta(modulo, resposta) : 'Pendente'}
-                          </div>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={modulo.id}
+                type="button"
+                className="mapa-no-orbita"
+                style={{ left: `${x}%`, top: `${y}%` }}
+                onClick={() => setSelecao({ modulo, resposta })}
+              >
+                <span className="mapa-no-orbita-ato">{ato?.titulo}</span>
+                <span className="mapa-no-orbita-titulo">{modulo.titulo}</span>
+                <span className="mapa-no-orbita-trecho">{trechoResposta(modulo, resposta)}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {selecao && (
         <RespostaModal modulo={selecao.modulo} resposta={selecao.resposta} onFechar={() => setSelecao(null)} />
