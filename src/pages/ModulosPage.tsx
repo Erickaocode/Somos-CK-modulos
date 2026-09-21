@@ -66,6 +66,7 @@ export default function ModulosPage() {
                         titulo={modulo.titulo}
                         descricao={modulo.descricao}
                         numero={MODULOS.indexOf(modulo) + 1}
+                        motivo={bloqueado ? 'ato' : 'sequencia'}
                       />
                     ) : (
                       <ModuloItem

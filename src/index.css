@@ -360,6 +360,15 @@ button {
   color: var(--cinza-700);
 }
 
+.aviso-bloqueio {
+  background: rgba(255, 201, 60, 0.18);
+  border: 1px solid rgba(255, 201, 60, 0.5);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--cinza-700);
+}
+
 /* ---------- Módulos ---------- */
 .modulo-item {
   padding: 20px 22px;
