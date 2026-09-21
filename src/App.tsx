@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import IdentificacaoPage from './pages/IdentificacaoPage';
 import ModulosPage from './pages/ModulosPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<IdentificacaoPage />} />
         <Route path="/modulos" element={<ModulosPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
