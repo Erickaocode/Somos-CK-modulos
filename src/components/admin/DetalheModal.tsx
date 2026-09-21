@@ -1,6 +1,8 @@
 import type { Jovem, Modulo } from '../../types';
 import { mascararCPF } from '../../lib/cpf';
 import { formatarData } from '../../lib/format';
+import { tentarParsearDesejos } from '../../lib/desejos';
+import ListaDesejosResumo from '../ListaDesejosResumo';
 
 interface DetalheModalProps {
   jovem: Jovem | null;
@@ -34,11 +36,16 @@ export default function DetalheModal({ jovem, modulos, onFechar }: DetalheModalP
         <div>
           {respostasOrdenadas.map((r) => {
             const modulo = modulos.find((m) => m.id === r.moduloId);
+            const dadosDesejos = modulo?.categoriasDesejos ? tentarParsearDesejos(r.resposta) : null;
             return (
               <div className="resposta-admin-item" key={`${r.moduloId}-${r.data}`}>
                 <div className="modulo">{modulo ? modulo.titulo : r.moduloId}</div>
                 <div className="data">{formatarData(r.data)}</div>
-                <div className="texto">{r.resposta}</div>
+                {dadosDesejos && modulo?.categoriasDesejos ? (
+                  <ListaDesejosResumo dados={dadosDesejos} categorias={modulo.categoriasDesejos} />
+                ) : (
+                  <div className="texto">{r.resposta}</div>
+                )}
               </div>
             );
           })}

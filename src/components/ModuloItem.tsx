@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import type { Modulo, Resposta } from '../types';
+import type { Modulo, Resposta, RespostaDesejos } from '../types';
+import { serializarDesejos, tentarParsearDesejos } from '../lib/desejos';
+import ListaDesejosForm from './ListaDesejosForm';
+import ListaDesejosResumo from './ListaDesejosResumo';
 
 interface ModuloItemProps {
   modulo: Modulo;
@@ -14,6 +17,7 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
   const [rascunho, setRascunho] = useState('');
 
   const concluido = !!respostaExistente;
+  const ehListaDesejos = !!modulo.categoriasDesejos;
 
   function iniciarEdicao() {
     setRascunho(respostaExistente?.resposta ?? '');
@@ -24,6 +28,11 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
     const texto = rascunho.trim();
     if (!texto) return;
     onSalvar(modulo.id, texto);
+    setEditando(false);
+  }
+
+  function salvarDesejos(dados: RespostaDesejos) {
+    onSalvar(modulo.id, serializarDesejos(dados));
     setEditando(false);
   }
 
@@ -45,7 +54,36 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
       <div className="modulo-corpo">
         <p className="modulo-pergunta">{modulo.pergunta}</p>
 
-        {concluido && !editando ? (
+        {ehListaDesejos ? (
+          concluido && !editando ? (
+            <>
+              {(() => {
+                const dados = tentarParsearDesejos(respostaExistente.resposta);
+                return dados ? (
+                  <ListaDesejosResumo dados={dados} categorias={modulo.categoriasDesejos!} />
+                ) : (
+                  <div className="resposta-salva">{respostaExistente.resposta}</div>
+                );
+              })()}
+              <button
+                className="btn btn-secundario btn-pequeno"
+                style={{ marginTop: 10 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditando(true);
+                }}
+              >
+                Editar resposta
+              </button>
+            </>
+          ) : (
+            <ListaDesejosForm
+              categorias={modulo.categoriasDesejos!}
+              valorInicial={respostaExistente ? (tentarParsearDesejos(respostaExistente.resposta) ?? undefined) : undefined}
+              onSalvar={salvarDesejos}
+            />
+          )
+        ) : concluido && !editando ? (
           <>
             <div className="resposta-salva">{respostaExistente.resposta}</div>
             <button

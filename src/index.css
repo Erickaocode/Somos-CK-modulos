@@ -191,17 +191,20 @@ button {
   color: var(--cinza-700);
 }
 
-.campo input {
+.campo input,
+.campo select {
   width: 100%;
   padding: 11px 13px;
   border: 1.5px solid var(--cinza-200);
   border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
+  background: var(--branco);
   transition: border-color 0.15s;
 }
 
-.campo input:focus {
+.campo input:focus,
+.campo select:focus {
   outline: none;
   border-color: var(--roxo-600);
 }
@@ -415,6 +418,53 @@ button {
   font-size: 13.5px;
   color: var(--cinza-700);
   white-space: pre-wrap;
+}
+
+/* ---------- Lista de desejos ---------- */
+.form-desejos-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .form-desejos-linha {
+    grid-template-columns: 1fr;
+  }
+}
+
+.categoria-desejo {
+  border-top: 1px solid var(--cinza-200);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.categoria-desejo-titulo {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--roxo-700);
+  margin-bottom: 10px;
+}
+
+.desejos-resumo-cabecalho {
+  font-weight: 700;
+  color: var(--roxo-700);
+  margin-bottom: 10px;
+}
+
+.desejos-resumo-categoria {
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.desejos-resumo-categoria + .desejos-resumo-categoria {
+  border-top: 1px solid var(--cinza-200);
+}
+
+.desejos-resumo-categoria-titulo {
+  font-weight: 600;
+  color: var(--cinza-900);
+  margin-right: 8px;
 }
 
 /* ---------- Sidebar de histórico ---------- */

@@ -1,4 +1,5 @@
 import type { Ato, Modulo } from '../types';
+import { CATEGORIAS_DESEJOS } from './categoriasDesejos';
 
 export const ATOS: Ato[] = [
   { id: 'ato-1', titulo: 'Ato 1 — Primeiros Passos' },
@@ -13,6 +14,14 @@ export const MODULOS: Modulo[] = [
     titulo: 'Boas-vindas ao Programa',
     descricao: 'Conheça os objetivos do programa de aprendizagem e o que esperar dos próximos meses.',
     pergunta: 'O que você mais espera aprender durante o programa?',
+  },
+  {
+    id: 'lista-desejos',
+    atoId: 'ato-1',
+    titulo: 'Lista de Desejos - Eu no Futuro',
+    descricao: 'Um convite para sonhar sem limitações, em 8 áreas da vida, com prazos estimados para cada sonho.',
+    pergunta: 'E se tudo fosse possível? Não existem respostas certas ou erradas.',
+    categoriasDesejos: CATEGORIAS_DESEJOS,
   },
   {
     id: 'postura-profissional',
