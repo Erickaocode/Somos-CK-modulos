@@ -14,33 +14,41 @@ interface SelecaoModulo {
   resposta: Resposta;
 }
 
-const RAIO_ATO = 24;
-const RAIO_MODULO_DESEJADO = 60;
-const MARGEM_SEGURA = 11;
-const OFFSET_MINIMO = 30;
-const PASSO_ENTRE_PARES = 28;
+interface Ponto {
+  x: number;
+  y: number;
+}
 
-function ponto(anguloGraus: number, raio: number) {
+const RAIO_ATO = 22;
+const RAIO_MODULO_DESEJADO = 34;
+const MARGEM_SEGURA = 9;
+const OFFSET_MINIMO = 24;
+const PASSO_INCREMENTO = 16;
+
+function ponto(anguloGraus: number, raio: number, origem: Ponto = { x: 50, y: 50 }): Ponto {
   const rad = (anguloGraus * Math.PI) / 180;
-  return { x: 50 + raio * Math.cos(rad), y: 50 + raio * Math.sin(rad) };
+  return { x: origem.x + raio * Math.cos(rad), y: origem.y + raio * Math.sin(rad) };
 }
 
 // Afasta cada módulo do ângulo do próprio Ato (nunca alinhado com ele, senão
-// ficaria colado ao nó do Ato), alternando para os dois lados e abrindo mais
-// a cada par para não empilhar módulos vizinhos.
+// ficaria colado ao nó do Ato) e usa um deslocamento diferente por módulo
+// (não espelhado aos pares) para que as linhas nunca fiquem retas/alinhadas
+// por coincidência — sempre com aquele ângulo torto de mapa mental.
 function anguloDoModulo(anguloAto: number, indice: number) {
-  const par = Math.floor(indice / 2);
   const sinal = indice % 2 === 0 ? 1 : -1;
-  const offset = OFFSET_MINIMO + par * PASSO_ENTRE_PARES;
+  const offset = OFFSET_MINIMO + indice * PASSO_INCREMENTO;
   return anguloAto + sinal * offset;
 }
 
-function raioSeguro(anguloGraus: number, desejado: number) {
+// Raio máximo, a partir do próprio nó do Ato, que ainda mantém o módulo
+// dentro da área segura do mapa (evita cortar nas bordas em qualquer direção).
+function raioLocalSeguro(origem: Ponto, anguloGraus: number, desejado: number) {
   const rad = (anguloGraus * Math.PI) / 180;
-  const limite = 50 - MARGEM_SEGURA;
-  const maxX = limite / Math.abs(Math.cos(rad));
-  const maxY = limite / Math.abs(Math.sin(rad));
-  return Math.min(desejado, maxX, maxY);
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const limiteX = cos > 0.001 ? (100 - MARGEM_SEGURA - origem.x) / cos : cos < -0.001 ? (MARGEM_SEGURA - origem.x) / cos : Infinity;
+  const limiteY = sin > 0.001 ? (100 - MARGEM_SEGURA - origem.y) / sin : sin < -0.001 ? (MARGEM_SEGURA - origem.y) / sin : Infinity;
+  return Math.min(desejado, limiteX, limiteY);
 }
 
 export default function MapaMental({ historico }: MapaMentalProps) {
@@ -65,6 +73,14 @@ export default function MapaMental({ historico }: MapaMentalProps) {
   const anguloAtoExpandido = indiceAtoExpandido >= 0 ? anguloAtos[indiceAtoExpandido] : 0;
   const pontoAtoExpandido = indiceAtoExpandido >= 0 ? ponto(anguloAtoExpandido, RAIO_ATO) : null;
 
+  const modulosPosicionados = pontoAtoExpandido
+    ? modulosExpandidos.map((modulo, j) => {
+        const angulo = anguloDoModulo(anguloAtoExpandido, j);
+        const raio = raioLocalSeguro(pontoAtoExpandido, angulo, RAIO_MODULO_DESEJADO);
+        return { modulo, ponto: ponto(angulo, raio, pontoAtoExpandido) };
+      })
+    : [];
+
   return (
     <div className="mapa-mental">
       <div className="mapa-radial">
@@ -74,20 +90,16 @@ export default function MapaMental({ historico }: MapaMentalProps) {
             return <line key={ato.id} className="mapa-linha" x1={50} y1={50} x2={p.x} y2={p.y} />;
           })}
           {pontoAtoExpandido &&
-            modulosExpandidos.map((modulo, j) => {
-              const angulo = anguloDoModulo(anguloAtoExpandido, j);
-              const p = ponto(angulo, raioSeguro(angulo, RAIO_MODULO_DESEJADO));
-              return (
-                <line
-                  key={modulo.id}
-                  className="mapa-linha mapa-linha-modulo"
-                  x1={pontoAtoExpandido.x}
-                  y1={pontoAtoExpandido.y}
-                  x2={p.x}
-                  y2={p.y}
-                />
-              );
-            })}
+            modulosPosicionados.map(({ modulo, ponto: p }) => (
+              <line
+                key={modulo.id}
+                className="mapa-linha mapa-linha-modulo"
+                x1={pontoAtoExpandido.x}
+                y1={pontoAtoExpandido.y}
+                x2={p.x}
+                y2={p.y}
+              />
+            ))}
         </svg>
 
         <div className="mapa-centro">Seu Mapa</div>
@@ -118,36 +130,33 @@ export default function MapaMental({ historico }: MapaMentalProps) {
           );
         })}
 
-        {pontoAtoExpandido &&
-          modulosExpandidos.map((modulo, j) => {
-            const angulo = anguloDoModulo(anguloAtoExpandido, j);
-            const p = ponto(angulo, raioSeguro(angulo, RAIO_MODULO_DESEJADO));
-            const resposta = historico.find((r) => r.moduloId === modulo.id);
-            const concluido = !!resposta;
-            const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, false);
+        {modulosPosicionados.map(({ modulo, ponto: p }) => {
+          const resposta = historico.find((r) => r.moduloId === modulo.id);
+          const concluido = !!resposta;
+          const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, false);
 
-            const statusIcone = bloqueadoModulo ? '🔒' : concluido ? '✓' : '○';
-            const statusTitulo = bloqueadoModulo
-              ? 'Bloqueado — conclua os módulos anteriores.'
-              : concluido
-                ? trechoResposta(modulo, resposta)
-                : 'Pendente';
+          const statusIcone = bloqueadoModulo ? '🔒' : concluido ? '✓' : '○';
+          const statusTitulo = bloqueadoModulo
+            ? 'Bloqueado — conclua os módulos anteriores.'
+            : concluido
+              ? trechoResposta(modulo, resposta)
+              : 'Pendente';
 
-            return (
-              <button
-                key={modulo.id}
-                type="button"
-                className={`mapa-chip mapa-chip--orbita${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
-                style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                disabled={bloqueadoModulo || !concluido}
-                title={`${modulo.titulo} — ${statusTitulo}`}
-                onClick={() => resposta && setSelecao({ modulo, resposta })}
-              >
-                <span className="mapa-chip-status">{statusIcone}</span>
-                <span className="mapa-chip-titulo">{modulo.titulo}</span>
-              </button>
-            );
-          })}
+          return (
+            <button
+              key={modulo.id}
+              type="button"
+              className={`mapa-chip mapa-chip--orbita${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
+              disabled={bloqueadoModulo || !concluido}
+              title={`${modulo.titulo} — ${statusTitulo}`}
+              onClick={() => resposta && setSelecao({ modulo, resposta })}
+            >
+              <span className="mapa-chip-status">{statusIcone}</span>
+              <span className="mapa-chip-titulo">{modulo.titulo}</span>
+            </button>
+          );
+        })}
       </div>
 
       {selecao && (
