@@ -267,34 +267,155 @@ button {
   cursor: not-allowed;
 }
 
-/* ---------- Banner / hero ---------- */
-.hero {
+/* ---------- Mapa mental ---------- */
+.mapa-mental {
   border-radius: var(--raio);
-  overflow: hidden;
   background: linear-gradient(135deg, var(--roxo-700), var(--roxo-900));
   color: var(--branco);
-  padding: 40px 36px;
+  padding: 36px 24px 28px;
   margin-bottom: 22px;
+  overflow-x: auto;
 }
 
-.hero .tag {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 4px 10px;
+.mapa-centro-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.mapa-centro {
+  background: var(--branco);
+  color: var(--roxo-900);
+  font-weight: 800;
+  font-size: 18px;
+  padding: 14px 30px;
   border-radius: 100px;
-  font-size: 12px;
-  margin-bottom: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
 }
 
-.hero h1 {
-  margin: 0 0 8px;
-  font-size: 24px;
+.mapa-ramos {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 28px;
+  min-width: max-content;
+  margin: 0 auto;
 }
-.hero p {
-  margin: 0;
-  opacity: 0.85;
-  font-size: 14px;
-  max-width: 520px;
+
+.mapa-ramos::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateX(-50%);
+}
+
+.mapa-ramo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 2px solid rgba(255, 255, 255, 0.35);
+  padding-top: 28px;
+}
+
+.mapa-ramo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateX(-50%);
+}
+
+.mapa-ramos--modulos {
+  gap: 14px;
+  padding-top: 22px;
+}
+
+.mapa-ramos--modulos .mapa-ramo {
+  padding-top: 22px;
+}
+
+.mapa-ramos--modulos .mapa-ramo::before,
+.mapa-ramos--modulos::before {
+  height: 22px;
+}
+
+.mapa-no {
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+  font-family: inherit;
+  border: none;
+}
+
+.mapa-no-ato {
+  background: rgba(255, 255, 255, 0.12);
+  min-width: 160px;
+}
+
+.mapa-no-ato.bloqueado {
+  opacity: 0.55;
+}
+
+.mapa-no-titulo {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--branco);
+}
+
+.mapa-no-tag {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mapa-no-modulo {
+  background: var(--branco);
+  width: 150px;
+  cursor: default;
+}
+
+.mapa-no-modulo .mapa-no-titulo {
+  color: var(--cinza-900);
+}
+
+.mapa-no-modulo .mapa-no-trecho {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--cinza-400);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.mapa-no-modulo.concluido {
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mapa-no-modulo.concluido .mapa-no-trecho {
+  color: var(--verde);
+  font-weight: 600;
+}
+
+.mapa-no-modulo.bloqueado {
+  opacity: 0.5;
+}
+
+.mapa-no-modulo:disabled {
+  cursor: not-allowed;
 }
 
 /* ---------- Atos ---------- */
@@ -803,6 +924,7 @@ table.tabela-jovens tr:hover td {
 
 .modal {
   background: var(--branco);
+  color: var(--cinza-900);
   border-radius: 16px;
   max-width: 560px;
   width: 100%;

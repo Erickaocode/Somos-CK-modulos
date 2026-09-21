@@ -4,6 +4,7 @@ import Topbar from '../components/Topbar';
 import ModuloItem from '../components/ModuloItem';
 import ModuloBloqueado from '../components/ModuloBloqueado';
 import AtoHeader from '../components/AtoHeader';
+import MapaMental from '../components/MapaMental';
 import HistoricoLista from '../components/HistoricoLista';
 import BarraProgresso from '../components/BarraProgresso';
 import { ATOS, MODULOS } from '../data/modulos';
@@ -41,14 +42,7 @@ export default function ModulosPage() {
       <Topbar nome={sessao.nome} onSair={handleSair} />
 
       <div className="page">
-        <div className="hero">
-          <span className="tag">Programa de Aprendizagem</span>
-          <h1>Eu do Futuro</h1>
-          <p>
-            Responda os módulos abaixo no seu ritmo. Suas respostas ficam salvas e você pode revisar o histórico a
-            qualquer momento no painel ao lado.
-          </p>
-        </div>
+        <MapaMental historico={historico} />
 
         <div className="layout-duas-colunas">
           <div className="card" id="lista-modulos">

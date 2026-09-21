@@ -4,11 +4,9 @@ import { serializarDesejos, tentarParsearDesejos } from '../lib/desejos';
 import { serializarRodaVida, tentarParsearRodaVida } from '../lib/rodaVida';
 import { serializarFormulario, tentarParsearFormulario } from '../lib/formularioGenerico';
 import ListaDesejosForm from './ListaDesejosForm';
-import ListaDesejosResumo from './ListaDesejosResumo';
 import RodaVidaForm from './RodaVidaForm';
-import RodaVidaResumo from './RodaVidaResumo';
 import FormularioGenericoForm from './FormularioGenericoForm';
-import FormularioGenericoResumo from './FormularioGenericoResumo';
+import RespostaResumo from './RespostaResumo';
 
 interface ModuloItemProps {
   modulo: Modulo;
@@ -52,15 +50,11 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
   }
 
   function renderCorpo() {
+    if (concluido && !editando) {
+      return <RespostaResumo modulo={modulo} resposta={respostaExistente!} />;
+    }
+
     if (modulo.tipo === 'lista-desejos') {
-      if (concluido && !editando) {
-        const dados = respostaExistente && tentarParsearDesejos(respostaExistente.resposta);
-        return dados ? (
-          <ListaDesejosResumo dados={dados} categorias={modulo.categoriasDesejos} />
-        ) : (
-          <div className="resposta-salva">{respostaExistente!.resposta}</div>
-        );
-      }
       return (
         <ListaDesejosForm
           categorias={modulo.categoriasDesejos}
@@ -71,14 +65,6 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
     }
 
     if (modulo.tipo === 'roda-vida') {
-      if (concluido && !editando) {
-        const dados = respostaExistente && tentarParsearRodaVida(respostaExistente.resposta);
-        return dados ? (
-          <RodaVidaResumo dados={dados} dimensoes={modulo.dimensoesRodaVida} areas={modulo.areasRodaVida} />
-        ) : (
-          <div className="resposta-salva">{respostaExistente!.resposta}</div>
-        );
-      }
       return (
         <RodaVidaForm
           dimensoes={modulo.dimensoesRodaVida}
@@ -90,14 +76,6 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
     }
 
     if (modulo.tipo === 'formulario') {
-      if (concluido && !editando) {
-        const dados = respostaExistente && tentarParsearFormulario(respostaExistente.resposta);
-        return dados ? (
-          <FormularioGenericoResumo dados={dados} campos={modulo.campos} incluirModalidade={modulo.incluirModalidade} />
-        ) : (
-          <div className="resposta-salva">{respostaExistente!.resposta}</div>
-        );
-      }
       return (
         <FormularioGenericoForm
           campos={modulo.campos}
@@ -108,9 +86,6 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
       );
     }
 
-    if (concluido && !editando) {
-      return <div className="resposta-salva">{respostaExistente!.resposta}</div>;
-    }
     return (
       <textarea
         placeholder="Escreva sua resposta..."
