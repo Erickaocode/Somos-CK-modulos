@@ -278,7 +278,7 @@ button {
 .mapa-radial {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 820px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
@@ -297,6 +297,10 @@ button {
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
   animation: mapa-linha-desenhar 0.5s ease forwards;
+}
+
+.mapa-linha-modulo {
+  stroke: rgba(255, 255, 255, 0.55);
 }
 
 .mapa-centro {
@@ -386,44 +390,29 @@ button {
   animation: mapa-no-surge 0.2s ease-out;
 }
 
-.mapa-drawer {
-  max-width: 620px;
-  margin: 18px auto 0;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 16px 18px;
-  animation: mapa-drawer-surge 0.25s ease-out;
-}
-
-.mapa-drawer-titulo {
-  color: var(--branco);
-  font-size: 12.5px;
-  font-weight: 700;
-  opacity: 0.85;
-  margin-bottom: 10px;
-}
-
-.mapa-drawer-modulos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
 .mapa-chip {
   background: var(--branco);
   border: none;
   border-radius: 20px;
-  padding: 8px 14px;
+  padding: 7px 13px;
   font-family: inherit;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
 }
 
-.mapa-chip:hover:not(:disabled) {
-  transform: translateY(-2px);
+.mapa-chip--orbita {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  z-index: 2;
+  animation: mapa-no-surge 0.3s ease-out;
+}
+
+.mapa-chip--orbita:hover:not(:disabled) {
+  transform: translate(-50%, -50%) scale(1.06);
 }
 
 .mapa-chip.bloqueado,
@@ -443,21 +432,16 @@ button {
 }
 
 .mapa-chip-titulo {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--cinza-900);
   white-space: nowrap;
 }
 
-@keyframes mapa-drawer-surge {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.mapa-chip--orbita .mapa-chip-titulo {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @keyframes mapa-no-surge {
@@ -483,17 +467,17 @@ button {
   }
 
   .mapa-radial {
-    max-width: 380px;
+    max-width: 420px;
   }
 
   .mapa-no-ato {
-    width: 118px;
-    padding: 8px 10px;
+    width: 92px;
+    padding: 6px 8px;
   }
 
   .mapa-aviso {
-    width: 118px;
-    font-size: 9.5px;
+    width: 92px;
+    font-size: 8.5px;
   }
 
   .mapa-centro {
@@ -501,17 +485,17 @@ button {
     padding: 10px 18px;
   }
 
-  .mapa-drawer {
-    padding: 14px;
-  }
-
   .mapa-chip {
-    padding: 7px 12px;
+    padding: 4px 7px;
+    gap: 3px;
   }
 
   .mapa-chip-titulo {
-    font-size: 11px;
-    white-space: normal;
+    font-size: 9px;
+  }
+
+  .mapa-chip--orbita .mapa-chip-titulo {
+    max-width: 54px;
   }
 }
 

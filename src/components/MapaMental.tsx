@@ -14,11 +14,33 @@ interface SelecaoModulo {
   resposta: Resposta;
 }
 
-const RAIO_ATO = 30;
+const RAIO_ATO = 24;
+const RAIO_MODULO_DESEJADO = 60;
+const MARGEM_SEGURA = 11;
+const OFFSET_MINIMO = 30;
+const PASSO_ENTRE_PARES = 28;
 
 function ponto(anguloGraus: number, raio: number) {
   const rad = (anguloGraus * Math.PI) / 180;
   return { x: 50 + raio * Math.cos(rad), y: 50 + raio * Math.sin(rad) };
+}
+
+// Afasta cada módulo do ângulo do próprio Ato (nunca alinhado com ele, senão
+// ficaria colado ao nó do Ato), alternando para os dois lados e abrindo mais
+// a cada par para não empilhar módulos vizinhos.
+function anguloDoModulo(anguloAto: number, indice: number) {
+  const par = Math.floor(indice / 2);
+  const sinal = indice % 2 === 0 ? 1 : -1;
+  const offset = OFFSET_MINIMO + par * PASSO_ENTRE_PARES;
+  return anguloAto + sinal * offset;
+}
+
+function raioSeguro(anguloGraus: number, desejado: number) {
+  const rad = (anguloGraus * Math.PI) / 180;
+  const limite = 50 - MARGEM_SEGURA;
+  const maxX = limite / Math.abs(Math.cos(rad));
+  const maxY = limite / Math.abs(Math.sin(rad));
+  return Math.min(desejado, maxX, maxY);
 }
 
 export default function MapaMental({ historico }: MapaMentalProps) {
@@ -38,8 +60,10 @@ export default function MapaMental({ historico }: MapaMentalProps) {
     setAtoExpandido((atual) => (atual === atoId ? null : atoId));
   }
 
-  const atoAtual = atosVisiveis.find((a) => a.id === atoExpandido) ?? null;
-  const modulosDoAtoAtual = atoAtual ? MODULOS.filter((m) => m.atoId === atoAtual.id) : [];
+  const indiceAtoExpandido = atoExpandido ? atosVisiveis.findIndex((a) => a.id === atoExpandido) : -1;
+  const modulosExpandidos = indiceAtoExpandido >= 0 ? MODULOS.filter((m) => m.atoId === atoExpandido) : [];
+  const anguloAtoExpandido = indiceAtoExpandido >= 0 ? anguloAtos[indiceAtoExpandido] : 0;
+  const pontoAtoExpandido = indiceAtoExpandido >= 0 ? ponto(anguloAtoExpandido, RAIO_ATO) : null;
 
   return (
     <div className="mapa-mental">
@@ -49,6 +73,21 @@ export default function MapaMental({ historico }: MapaMentalProps) {
             const p = ponto(anguloAtos[i], RAIO_ATO);
             return <line key={ato.id} className="mapa-linha" x1={50} y1={50} x2={p.x} y2={p.y} />;
           })}
+          {pontoAtoExpandido &&
+            modulosExpandidos.map((modulo, j) => {
+              const angulo = anguloDoModulo(anguloAtoExpandido, j);
+              const p = ponto(angulo, raioSeguro(angulo, RAIO_MODULO_DESEJADO));
+              return (
+                <line
+                  key={modulo.id}
+                  className="mapa-linha mapa-linha-modulo"
+                  x1={pontoAtoExpandido.x}
+                  y1={pontoAtoExpandido.y}
+                  x2={p.x}
+                  y2={p.y}
+                />
+              );
+            })}
         </svg>
 
         <div className="mapa-centro">Seu Mapa</div>
@@ -78,41 +117,38 @@ export default function MapaMental({ historico }: MapaMentalProps) {
             </div>
           );
         })}
+
+        {pontoAtoExpandido &&
+          modulosExpandidos.map((modulo, j) => {
+            const angulo = anguloDoModulo(anguloAtoExpandido, j);
+            const p = ponto(angulo, raioSeguro(angulo, RAIO_MODULO_DESEJADO));
+            const resposta = historico.find((r) => r.moduloId === modulo.id);
+            const concluido = !!resposta;
+            const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, false);
+
+            const statusIcone = bloqueadoModulo ? '🔒' : concluido ? '✓' : '○';
+            const statusTitulo = bloqueadoModulo
+              ? 'Bloqueado — conclua os módulos anteriores.'
+              : concluido
+                ? trechoResposta(modulo, resposta)
+                : 'Pendente';
+
+            return (
+              <button
+                key={modulo.id}
+                type="button"
+                className={`mapa-chip mapa-chip--orbita${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
+                style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                disabled={bloqueadoModulo || !concluido}
+                title={`${modulo.titulo} — ${statusTitulo}`}
+                onClick={() => resposta && setSelecao({ modulo, resposta })}
+              >
+                <span className="mapa-chip-status">{statusIcone}</span>
+                <span className="mapa-chip-titulo">{modulo.titulo}</span>
+              </button>
+            );
+          })}
       </div>
-
-      {atoAtual && (
-        <div className="mapa-drawer">
-          <div className="mapa-drawer-titulo">Módulos de {atoAtual.titulo}</div>
-          <div className="mapa-drawer-modulos">
-            {modulosDoAtoAtual.map((modulo) => {
-              const resposta = historico.find((r) => r.moduloId === modulo.id);
-              const concluido = !!resposta;
-              const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, false);
-
-              const statusIcone = bloqueadoModulo ? '🔒' : concluido ? '✓' : '○';
-              const statusTitulo = bloqueadoModulo
-                ? 'Bloqueado — conclua os módulos anteriores.'
-                : concluido
-                  ? trechoResposta(modulo, resposta)
-                  : 'Pendente';
-
-              return (
-                <button
-                  key={modulo.id}
-                  type="button"
-                  className={`mapa-chip${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
-                  disabled={bloqueadoModulo || !concluido}
-                  title={`${modulo.titulo} — ${statusTitulo}`}
-                  onClick={() => resposta && setSelecao({ modulo, resposta })}
-                >
-                  <span className="mapa-chip-status">{statusIcone}</span>
-                  <span className="mapa-chip-titulo">{modulo.titulo}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {selecao && (
         <RespostaModal modulo={selecao.modulo} resposta={selecao.resposta} onFechar={() => setSelecao(null)} />
