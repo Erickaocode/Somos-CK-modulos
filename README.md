@@ -1,4 +1,4 @@
-# Fichário Inteligente
+# Plano de vida
 
 Aplicação do fluxo de módulos do programa de aprendizagem/estágio, em **React + TypeScript** (Vite):
 

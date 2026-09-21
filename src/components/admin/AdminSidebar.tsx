@@ -5,7 +5,7 @@ export default function AdminSidebar() {
     <div className="admin-sidebar">
       <span className="logo-dot" />
       <h2>
-        Fichário Inteligente
+        Plano de vida
         <br />
         <small style={{ opacity: 0.6 }}>Área administrativa</small>
       </h2>

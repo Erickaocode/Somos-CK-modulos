@@ -36,7 +36,7 @@ export default function IdentificacaoPage() {
     <div className="tela-central">
       <div className="painel-identificacao">
         <span className="logo-dot" />
-        <h1>Fichário Inteligente</h1>
+        <h1>Plano de vida</h1>
         <p className="sub">Informe seu nome e CPF para começar (ou continuar) os módulos do curso.</p>
 
         <form onSubmit={handleSubmit} noValidate>

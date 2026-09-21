@@ -1,5 +1,5 @@
 /* ============================================================
-   Fichário Inteligente — camada de persistência do protótipo
+   Plano de vida — camada de persistência do protótipo
    ------------------------------------------------------------
    Usa localStorage como "banco de dados" e sessionStorage para a
    sessão do jovem logado. Numa versão conectada a back-end, esta
