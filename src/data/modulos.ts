@@ -4,8 +4,8 @@ import { AREAS_RODA_VIDA, DIMENSOES_RODA_VIDA } from './rodaDaVida';
 
 export const ATOS: Ato[] = [
   { id: 'ato-1', titulo: 'Ato 1 — Seu Mapa' },
-  { id: 'ato-2', titulo: 'Ato 2 — Postura no Trabalho' },
-  { id: 'ato-3', titulo: 'Ato 3 — Meu Futuro' },
+  { id: 'ato-2', titulo: 'Ato 2 — Seu Mapa' },
+  { id: 'ato-3', titulo: 'Ato 3 — Seu Mapa' },
 ];
 
 export const MODULOS: Modulo[] = [
@@ -68,30 +68,5 @@ export const MODULOS: Modulo[] = [
       { id: 'cronograma', label: 'Seu cronograma (temporal)', tipo: 'texto' },
       { id: 'minha-meta', label: 'Minha meta (síntese)', tipo: 'texto' },
     ],
-  },
-  {
-    id: 'postura-profissional',
-    atoId: 'ato-2',
-    titulo: 'Ética e Postura Profissional',
-    descricao: 'Boas práticas de conduta, pontualidade e relacionamento no ambiente de trabalho.',
-    pergunta:
-      'Descreva uma situação em que você precisou agir com responsabilidade em um trabalho, escola ou grupo.',
-    tipo: 'texto',
-  },
-  {
-    id: 'comunicacao',
-    atoId: 'ato-2',
-    titulo: 'Comunicação Assertiva',
-    descricao: 'Como se comunicar com clareza e respeito com colegas, líderes e clientes.',
-    pergunta: 'Cite um exemplo de como você se comunicaria para pedir ajuda em uma tarefa que não entendeu.',
-    tipo: 'texto',
-  },
-  {
-    id: 'plano-carreira',
-    atoId: 'ato-3',
-    titulo: 'Meu Plano de Carreira',
-    descricao: 'Primeiros passos para pensar sua trajetória profissional a partir do estágio ou aprendizagem.',
-    pergunta: 'Onde você se imagina profissionalmente daqui a 2 anos?',
-    tipo: 'texto',
   },
 ];
