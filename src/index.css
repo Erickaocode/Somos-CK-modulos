@@ -299,14 +299,65 @@ button {
 
 /* ---------- Atos ---------- */
 .ato-titulo {
-  padding: 16px 22px 10px;
+  padding: 14px 22px;
+  background: var(--roxo-100);
+  border-bottom: 1px solid var(--cinza-200);
+}
+
+.ato-titulo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--roxo-700);
-  background: var(--roxo-100);
-  border-bottom: 1px solid var(--cinza-200);
+}
+
+.ato-progresso-texto {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--cinza-700);
+  white-space: nowrap;
+}
+
+.ato-progresso-barra {
+  height: 5px;
+  border-radius: 100px;
+  background: var(--cinza-200);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.ato-progresso-preenchimento {
+  height: 100%;
+  background: linear-gradient(90deg, var(--roxo-600), var(--coral));
+  transition: width 0.2s ease;
+}
+
+.ato-bloqueado {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--cinza-400);
+  white-space: nowrap;
+}
+
+/* ---------- Módulo bloqueado ---------- */
+.modulo-item.bloqueado {
+  opacity: 0.6;
+}
+
+.modulo-item.bloqueado .modulo-cabecalho {
+  cursor: not-allowed;
+}
+
+.status-bloqueado {
+  background: var(--cinza-200);
+  color: var(--cinza-700);
 }
 
 /* ---------- Módulos ---------- */

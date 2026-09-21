@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import ModuloItem from '../components/ModuloItem';
+import ModuloBloqueado from '../components/ModuloBloqueado';
+import AtoHeader from '../components/AtoHeader';
 import HistoricoLista from '../components/HistoricoLista';
 import BarraProgresso from '../components/BarraProgresso';
 import { ATOS, MODULOS } from '../data/modulos';
+import { atoBloqueado, progressoDoAto } from '../lib/atos';
 import { encerrarSessao, obterRespostasDoJovem, obterSessao, salvarResposta } from '../lib/storage';
 import type { Sessao } from '../types';
 
@@ -49,20 +52,34 @@ export default function ModulosPage() {
 
         <div className="layout-duas-colunas">
           <div className="card" id="lista-modulos">
-            {ATOS.map((ato) => (
-              <div key={ato.id}>
-                <div className="ato-titulo">{ato.titulo}</div>
-                {MODULOS.filter((modulo) => modulo.atoId === ato.id).map((modulo) => (
-                  <ModuloItem
-                    key={modulo.id}
-                    modulo={modulo}
-                    numero={MODULOS.indexOf(modulo) + 1}
-                    respostaExistente={historico.find((r) => r.moduloId === modulo.id)}
-                    onSalvar={handleSalvar}
-                  />
-                ))}
-              </div>
-            ))}
+            {ATOS.map((ato, indice) => {
+              const bloqueado = atoBloqueado(indice, ATOS, MODULOS, historico);
+              const progresso = progressoDoAto(ato, MODULOS, historico);
+
+              return (
+                <div key={ato.id}>
+                  <AtoHeader titulo={ato.titulo} bloqueado={bloqueado} progresso={progresso} />
+                  {MODULOS.filter((modulo) => modulo.atoId === ato.id).map((modulo) =>
+                    bloqueado ? (
+                      <ModuloBloqueado
+                        key={modulo.id}
+                        titulo={modulo.titulo}
+                        descricao={modulo.descricao}
+                        numero={MODULOS.indexOf(modulo) + 1}
+                      />
+                    ) : (
+                      <ModuloItem
+                        key={modulo.id}
+                        modulo={modulo}
+                        numero={MODULOS.indexOf(modulo) + 1}
+                        respostaExistente={historico.find((r) => r.moduloId === modulo.id)}
+                        onSalvar={handleSalvar}
+                      />
+                    ),
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div>
