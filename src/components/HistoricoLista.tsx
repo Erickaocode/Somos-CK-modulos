@@ -1,6 +1,7 @@
 import type { Modulo, Resposta } from '../types';
 import { formatarData } from '../lib/format';
 import { contarSonhosPreenchidos, tentarParsearDesejos } from '../lib/desejos';
+import { areasPreenchidas, mediaGeral, tentarParsearRodaVida } from '../lib/rodaVida';
 
 interface HistoricoListaProps {
   historico: Resposta[];
@@ -8,13 +9,22 @@ interface HistoricoListaProps {
 }
 
 function trechoDaResposta(r: Resposta, modulo: Modulo | undefined): string {
-  if (modulo?.categoriasDesejos) {
+  if (modulo?.tipo === 'lista-desejos') {
     const dados = tentarParsearDesejos(r.resposta);
     if (dados) {
-      const total = modulo.categoriasDesejos.length;
-      return `${contarSonhosPreenchidos(dados)} de ${total} áreas preenchidas`;
+      return `${contarSonhosPreenchidos(dados)} de ${modulo.categoriasDesejos.length} áreas preenchidas`;
     }
   }
+
+  if (modulo?.tipo === 'roda-vida') {
+    const dados = tentarParsearRodaVida(r.resposta);
+    if (dados) {
+      const media = mediaGeral(dados);
+      const preenchidas = `${areasPreenchidas(dados)} de ${modulo.areasRodaVida.length} áreas avaliadas`;
+      return media !== null ? `${preenchidas} · nota média ${media}` : preenchidas;
+    }
+  }
+
   return r.resposta;
 }
 

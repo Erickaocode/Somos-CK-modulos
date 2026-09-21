@@ -467,6 +467,39 @@ button {
   margin-right: 8px;
 }
 
+/* ---------- Roda da vida ---------- */
+.area-roda-vida {
+  border-top: 1px solid var(--cinza-200);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.area-roda-vida-titulo {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--cinza-900);
+  margin-bottom: 4px;
+}
+
+.campo input[type='range'] {
+  width: 100%;
+  accent-color: var(--roxo-600);
+  padding: 8px 0;
+  border: none;
+}
+
+.area-roda-vida-resumo {
+  margin-top: 8px;
+}
+
+.area-roda-vida-resumo:first-child {
+  margin-top: 0;
+}
+
+.area-roda-vida-resumo .status-pill {
+  margin-right: 8px;
+}
+
 /* ---------- Sidebar de histórico ---------- */
 .sidebar-titulo {
   font-size: 14px;

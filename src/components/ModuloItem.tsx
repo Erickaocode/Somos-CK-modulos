@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import type { Modulo, Resposta, RespostaDesejos } from '../types';
+import type { Modulo, Resposta, RespostaDesejos, RespostaRodaVida } from '../types';
 import { serializarDesejos, tentarParsearDesejos } from '../lib/desejos';
+import { serializarRodaVida, tentarParsearRodaVida } from '../lib/rodaVida';
 import ListaDesejosForm from './ListaDesejosForm';
 import ListaDesejosResumo from './ListaDesejosResumo';
+import RodaVidaForm from './RodaVidaForm';
+import RodaVidaResumo from './RodaVidaResumo';
 
 interface ModuloItemProps {
   modulo: Modulo;
@@ -17,14 +20,13 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
   const [rascunho, setRascunho] = useState('');
 
   const concluido = !!respostaExistente;
-  const ehListaDesejos = !!modulo.categoriasDesejos;
 
   function iniciarEdicao() {
     setRascunho(respostaExistente?.resposta ?? '');
     setEditando(true);
   }
 
-  function salvar() {
+  function salvarTexto() {
     const texto = rascunho.trim();
     if (!texto) return;
     onSalvar(modulo.id, texto);
@@ -35,6 +37,65 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
     onSalvar(modulo.id, serializarDesejos(dados));
     setEditando(false);
   }
+
+  function salvarRodaVida(dados: RespostaRodaVida) {
+    onSalvar(modulo.id, serializarRodaVida(dados));
+    setEditando(false);
+  }
+
+  function renderCorpo() {
+    if (modulo.tipo === 'lista-desejos') {
+      if (concluido && !editando) {
+        const dados = respostaExistente && tentarParsearDesejos(respostaExistente.resposta);
+        return dados ? (
+          <ListaDesejosResumo dados={dados} categorias={modulo.categoriasDesejos} />
+        ) : (
+          <div className="resposta-salva">{respostaExistente!.resposta}</div>
+        );
+      }
+      return (
+        <ListaDesejosForm
+          categorias={modulo.categoriasDesejos}
+          valorInicial={respostaExistente ? (tentarParsearDesejos(respostaExistente.resposta) ?? undefined) : undefined}
+          onSalvar={salvarDesejos}
+        />
+      );
+    }
+
+    if (modulo.tipo === 'roda-vida') {
+      if (concluido && !editando) {
+        const dados = respostaExistente && tentarParsearRodaVida(respostaExistente.resposta);
+        return dados ? (
+          <RodaVidaResumo dados={dados} dimensoes={modulo.dimensoesRodaVida} areas={modulo.areasRodaVida} />
+        ) : (
+          <div className="resposta-salva">{respostaExistente!.resposta}</div>
+        );
+      }
+      return (
+        <RodaVidaForm
+          dimensoes={modulo.dimensoesRodaVida}
+          areas={modulo.areasRodaVida}
+          valorInicial={respostaExistente ? (tentarParsearRodaVida(respostaExistente.resposta) ?? undefined) : undefined}
+          onSalvar={salvarRodaVida}
+        />
+      );
+    }
+
+    if (concluido && !editando) {
+      return <div className="resposta-salva">{respostaExistente!.resposta}</div>;
+    }
+    return (
+      <textarea
+        placeholder="Escreva sua resposta..."
+        value={rascunho}
+        onChange={(e) => setRascunho(e.target.value)}
+        onClick={(e) => e.stopPropagation()}
+      />
+    );
+  }
+
+  const mostraBotaoEditar = concluido && !editando;
+  const mostraBotaoSalvarTexto = modulo.tipo === 'texto' && !mostraBotaoEditar;
 
   return (
     <div className={`modulo-item${aberto ? ' aberto' : ''}`}>
@@ -54,68 +115,36 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
       <div className="modulo-corpo">
         <p className="modulo-pergunta">{modulo.pergunta}</p>
 
-        {ehListaDesejos ? (
-          concluido && !editando ? (
-            <>
-              {(() => {
-                const dados = tentarParsearDesejos(respostaExistente.resposta);
-                return dados ? (
-                  <ListaDesejosResumo dados={dados} categorias={modulo.categoriasDesejos!} />
-                ) : (
-                  <div className="resposta-salva">{respostaExistente.resposta}</div>
-                );
-              })()}
-              <button
-                className="btn btn-secundario btn-pequeno"
-                style={{ marginTop: 10 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditando(true);
-                }}
-              >
-                Editar resposta
-              </button>
-            </>
-          ) : (
-            <ListaDesejosForm
-              categorias={modulo.categoriasDesejos!}
-              valorInicial={respostaExistente ? (tentarParsearDesejos(respostaExistente.resposta) ?? undefined) : undefined}
-              onSalvar={salvarDesejos}
-            />
-          )
-        ) : concluido && !editando ? (
-          <>
-            <div className="resposta-salva">{respostaExistente.resposta}</div>
-            <button
-              className="btn btn-secundario btn-pequeno"
-              style={{ marginTop: 10 }}
-              onClick={(e) => {
-                e.stopPropagation();
+        {renderCorpo()}
+
+        {mostraBotaoEditar && (
+          <button
+            className="btn btn-secundario btn-pequeno"
+            style={{ marginTop: 10 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (modulo.tipo === 'texto') {
                 iniciarEdicao();
-              }}
-            >
-              Editar resposta
-            </button>
-          </>
-        ) : (
-          <>
-            <textarea
-              placeholder="Escreva sua resposta..."
-              value={rascunho}
-              onChange={(e) => setRascunho(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <button
-              className="btn btn-primario btn-pequeno"
-              style={{ marginTop: 10 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                salvar();
-              }}
-            >
-              Salvar resposta
-            </button>
-          </>
+              } else {
+                setEditando(true);
+              }
+            }}
+          >
+            Editar resposta
+          </button>
+        )}
+
+        {mostraBotaoSalvarTexto && (
+          <button
+            className="btn btn-primario btn-pequeno"
+            style={{ marginTop: 10 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              salvarTexto();
+            }}
+          >
+            Salvar resposta
+          </button>
         )}
       </div>
     </div>
