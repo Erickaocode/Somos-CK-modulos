@@ -46,8 +46,10 @@ export interface ModuloRodaVida extends ModuloBase {
 export interface CampoFormulario {
   id: string;
   label: string;
-  tipo: 'texto' | 'select';
+  tipo: 'texto' | 'select' | 'multi-select';
   opcoes?: string[];
+  /** Para multi-select: limite opcional de opções marcáveis (ex.: "escolha até 5"). */
+  maximoSelecoes?: number;
 }
 
 export interface ModuloFormulario extends ModuloBase {

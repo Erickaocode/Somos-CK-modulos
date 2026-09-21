@@ -488,6 +488,28 @@ button {
   border: none;
 }
 
+.opcoes-multi-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opcao-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 100px;
+  padding: 6px 12px 6px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.opcao-checkbox input[type='checkbox'] {
+  accent-color: var(--roxo-600);
+}
+
 .area-roda-vida-resumo {
   margin-top: 8px;
 }
