@@ -138,6 +138,7 @@ button {
   border-radius: var(--raio);
   box-shadow: var(--sombra);
   border: 1px solid var(--cinza-200);
+  overflow: hidden;
 }
 
 /* ---------- Tela de identificação ---------- */
@@ -291,6 +292,18 @@ button {
   opacity: 0.85;
   font-size: 14px;
   max-width: 520px;
+}
+
+/* ---------- Atos ---------- */
+.ato-titulo {
+  padding: 16px 22px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--roxo-700);
+  background: var(--roxo-100);
+  border-bottom: 1px solid var(--cinza-200);
 }
 
 /* ---------- Módulos ---------- */

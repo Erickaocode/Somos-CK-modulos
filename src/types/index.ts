@@ -1,5 +1,11 @@
+export interface Ato {
+  id: string;
+  titulo: string;
+}
+
 export interface Modulo {
   id: string;
+  atoId: string;
   titulo: string;
   descricao: string;
   pergunta: string;
