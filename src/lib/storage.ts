@@ -84,9 +84,9 @@ export function semearDadosDemo(): void {
     {
       nome: 'Marcos Dourado',
       cpf: '123.456.789-09',
-      moduloId: 'boas-vindas',
+      moduloId: 'comunicacao',
       resposta:
-        'Espero aprender a lidar melhor com o público e entender como funciona o dia a dia de um supermercado.',
+        'Eu perguntaria com calma ao meu líder, explicando o que já tentei entender sozinho antes de pedir ajuda.',
     },
     {
       nome: 'Marcos Dourado',
@@ -98,7 +98,7 @@ export function semearDadosDemo(): void {
     {
       nome: 'Ana Beatriz Souza',
       cpf: '987.654.321-00',
-      moduloId: 'boas-vindas',
+      moduloId: 'plano-carreira',
       resposta: 'Quero aprender sobre atendimento ao cliente e crescer dentro da empresa.',
     },
   ];

@@ -3,20 +3,12 @@ import { CATEGORIAS_DESEJOS } from './categoriasDesejos';
 import { AREAS_RODA_VIDA, DIMENSOES_RODA_VIDA } from './rodaDaVida';
 
 export const ATOS: Ato[] = [
-  { id: 'ato-1', titulo: 'Ato 1 — Primeiros Passos' },
+  { id: 'ato-1', titulo: 'Ato 1 — Seu Mapa' },
   { id: 'ato-2', titulo: 'Ato 2 — Postura no Trabalho' },
   { id: 'ato-3', titulo: 'Ato 3 — Meu Futuro' },
 ];
 
 export const MODULOS: Modulo[] = [
-  {
-    id: 'boas-vindas',
-    atoId: 'ato-1',
-    titulo: 'Boas-vindas ao Programa',
-    descricao: 'Conheça os objetivos do programa de aprendizagem e o que esperar dos próximos meses.',
-    pergunta: 'O que você mais espera aprender durante o programa?',
-    tipo: 'texto',
-  },
   {
     id: 'lista-desejos',
     atoId: 'ato-1',
