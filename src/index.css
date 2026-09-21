@@ -272,7 +272,8 @@ button {
   border-radius: var(--raio);
   background: linear-gradient(135deg, var(--roxo-700), var(--roxo-900));
   padding: 22px 20px;
-  margin-bottom: 22px;
+  max-width: 520px;
+  margin: 0 auto 22px;
 }
 
 .mapa-radial {
