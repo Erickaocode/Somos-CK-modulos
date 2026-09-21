@@ -59,6 +59,25 @@ export const MODULOS: Modulo[] = [
     ],
   },
   {
+    id: 'smart',
+    atoId: 'ato-1',
+    titulo: 'SMART - Eu no Futuro',
+    descricao:
+      'Transforme um sonho em uma meta prática usando a metodologia SMART: específica, mensurável, atingível, relevante e temporal.',
+    pergunta: 'Escolha um sonho e vamos transformá-lo em uma meta SMART, passo a passo.',
+    tipo: 'formulario',
+    incluirModalidade: true,
+    campos: [
+      { id: 'sonho', label: 'Seu sonho', tipo: 'texto' },
+      { id: 'meta', label: 'Sua meta (específica)', tipo: 'texto' },
+      { id: 'como-medir', label: 'Como medir (mensurável)', tipo: 'texto' },
+      { id: 'recursos-forcas', label: 'Recursos e forças (atingível)', tipo: 'texto' },
+      { id: 'por-que-importa', label: 'Por que importa (relevante)', tipo: 'texto' },
+      { id: 'cronograma', label: 'Seu cronograma (temporal)', tipo: 'texto' },
+      { id: 'minha-meta', label: 'Minha meta (síntese)', tipo: 'texto' },
+    ],
+  },
+  {
     id: 'postura-profissional',
     atoId: 'ato-2',
     titulo: 'Ética e Postura Profissional',
