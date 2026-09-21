@@ -271,8 +271,8 @@ button {
 .mapa-mental {
   border-radius: var(--raio);
   background: linear-gradient(135deg, var(--roxo-700), var(--roxo-900));
-  padding: 22px 20px;
-  max-width: 520px;
+  padding: 22px 24px;
+  max-width: 640px;
   margin: 0 auto 22px;
 }
 
