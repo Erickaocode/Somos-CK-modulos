@@ -24,6 +24,8 @@ const RAIO_MODULO_DESEJADO = 34;
 const MARGEM_SEGURA = 9;
 const OFFSET_MINIMO = 24;
 const PASSO_INCREMENTO = 16;
+const FOLGA_TOPO = 11;
+const FOLGA_BASE = 17;
 
 function ponto(anguloGraus: number, raio: number, origem: Ponto = { x: 50, y: 50 }): Ponto {
   const rad = (anguloGraus * Math.PI) / 180;
@@ -81,12 +83,26 @@ export default function MapaMental({ historico }: MapaMentalProps) {
       })
     : [];
 
+  const atoPontos = atosVisiveis.map((_, i) => ponto(anguloAtos[i], RAIO_ATO));
+
+  // O mapa só mostra a faixa vertical realmente usada pelos nós (com uma
+  // folga), em vez de sempre ocupar um quadrado inteiro — evita sobrar
+  // fundo roxo vazio quando poucos Atos ou módulos estão em tela.
+  const todosOsY = [50, ...atoPontos.map((p) => p.y), ...modulosPosicionados.map((m) => m.ponto.y)];
+  const yMin = Math.max(0, Math.min(...todosOsY) - FOLGA_TOPO);
+  const yMax = Math.min(100, Math.max(...todosOsY) + FOLGA_BASE);
+  const altura = yMax - yMin;
+
+  function paraTop(y: number) {
+    return ((y - yMin) / altura) * 100;
+  }
+
   return (
     <div className="mapa-mental">
-      <div className="mapa-radial">
-        <svg className="mapa-linhas" viewBox="0 0 100 100">
+      <div className="mapa-radial" style={{ aspectRatio: `100 / ${altura}` }}>
+        <svg className="mapa-linhas" viewBox={`0 ${yMin} 100 ${altura}`}>
           {atosVisiveis.map((ato, i) => {
-            const p = ponto(anguloAtos[i], RAIO_ATO);
+            const p = atoPontos[i];
             return <line key={ato.id} className="mapa-linha" x1={50} y1={50} x2={p.x} y2={p.y} />;
           })}
           {pontoAtoExpandido &&
@@ -102,17 +118,19 @@ export default function MapaMental({ historico }: MapaMentalProps) {
             ))}
         </svg>
 
-        <div className="mapa-centro">Seu Mapa</div>
+        <div className="mapa-centro" style={{ top: `${paraTop(50)}%` }}>
+          Seu Mapa
+        </div>
 
         {atosVisiveis.map((ato, i) => {
           const progresso = progressoDoAto(ato, MODULOS, historico);
           const modulosDoAto = MODULOS.filter((m) => m.atoId === ato.id);
           const semModulos = modulosDoAto.length === 0;
-          const p = ponto(anguloAtos[i], RAIO_ATO);
+          const p = atoPontos[i];
           const expandido = atoExpandido === ato.id;
 
           return (
-            <div key={ato.id} className="mapa-no-wrap" style={{ left: `${p.x}%`, top: `${p.y}%` }}>
+            <div key={ato.id} className="mapa-no-wrap" style={{ left: `${p.x}%`, top: `${paraTop(p.y)}%` }}>
               <button
                 type="button"
                 className={`mapa-no-ato${expandido ? ' expandido' : ''}`}
@@ -147,7 +165,7 @@ export default function MapaMental({ historico }: MapaMentalProps) {
               key={modulo.id}
               type="button"
               className={`mapa-chip mapa-chip--orbita${bloqueadoModulo ? ' bloqueado' : ''}${concluido ? ' concluido' : ''}`}
-              style={{ left: `${p.x}%`, top: `${p.y}%` }}
+              style={{ left: `${p.x}%`, top: `${paraTop(p.y)}%` }}
               disabled={bloqueadoModulo || !concluido}
               title={`${modulo.titulo} — ${statusTitulo}`}
               onClick={() => resposta && setSelecao({ modulo, resposta })}

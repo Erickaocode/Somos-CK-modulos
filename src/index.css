@@ -280,7 +280,7 @@ button {
   position: relative;
   width: 100%;
   max-width: 480px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 2 / 1;
   margin: 0 auto;
 }
 
