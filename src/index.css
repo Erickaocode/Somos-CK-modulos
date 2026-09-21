@@ -299,10 +299,6 @@ button {
   animation: mapa-linha-desenhar 0.5s ease forwards;
 }
 
-.mapa-linha-modulo {
-  stroke: rgba(255, 255, 255, 0.55);
-}
-
 .mapa-centro {
   position: absolute;
   top: 50%;
@@ -355,10 +351,6 @@ button {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
-.mapa-no-ato.bloqueado {
-  opacity: 0.55;
-}
-
 .mapa-no-titulo {
   font-size: 12.5px;
   font-weight: 700;
@@ -394,56 +386,78 @@ button {
   animation: mapa-no-surge 0.2s ease-out;
 }
 
-.mapa-no-orbita {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 114px;
+.mapa-drawer {
+  max-width: 620px;
+  margin: 18px auto 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px 18px;
+  animation: mapa-drawer-surge 0.25s ease-out;
+}
+
+.mapa-drawer-titulo {
+  color: var(--branco);
+  font-size: 12.5px;
+  font-weight: 700;
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+
+.mapa-drawer-modulos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mapa-chip {
   background: var(--branco);
   border: none;
   border-radius: 20px;
-  padding: 6px 10px;
+  padding: 8px 14px;
   font-family: inherit;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  z-index: 2;
-  animation: mapa-no-surge 0.3s ease-out;
+  gap: 7px;
 }
 
-.mapa-no-orbita:hover:not(:disabled) {
-  transform: translate(-50%, -50%) scale(1.05);
+.mapa-chip:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
-.mapa-no-orbita.bloqueado,
-.mapa-no-orbita:disabled:not(.concluido) {
+.mapa-chip.bloqueado,
+.mapa-chip:disabled:not(.concluido) {
   opacity: 0.55;
   cursor: default;
 }
 
-.mapa-no-orbita:disabled {
-  cursor: default;
-}
-
-.mapa-no-orbita-status {
+.mapa-chip-status {
   flex-shrink: 0;
   font-size: 11px;
   color: var(--cinza-400);
 }
 
-.mapa-no-orbita.concluido .mapa-no-orbita-status {
+.mapa-chip.concluido .mapa-chip-status {
   color: var(--verde);
 }
 
-.mapa-no-orbita-titulo {
-  font-size: 10.5px;
+.mapa-chip-titulo {
+  font-size: 12px;
   font-weight: 700;
   color: var(--cinza-900);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+@keyframes mapa-drawer-surge {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes mapa-no-surge {
@@ -477,16 +491,6 @@ button {
     padding: 8px 10px;
   }
 
-  .mapa-no-orbita {
-    width: 96px;
-    padding: 5px 8px;
-    gap: 4px;
-  }
-
-  .mapa-no-orbita-titulo {
-    font-size: 9.5px;
-  }
-
   .mapa-aviso {
     width: 118px;
     font-size: 9.5px;
@@ -495,6 +499,19 @@ button {
   .mapa-centro {
     font-size: 13px;
     padding: 10px 18px;
+  }
+
+  .mapa-drawer {
+    padding: 14px;
+  }
+
+  .mapa-chip {
+    padding: 7px 12px;
+  }
+
+  .mapa-chip-titulo {
+    font-size: 11px;
+    white-space: normal;
   }
 }
 
