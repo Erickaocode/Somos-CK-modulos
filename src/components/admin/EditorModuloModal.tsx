@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import type { CampoFormulario, Modulo } from '../../types';
+import type { ChangeEvent } from 'react';
+import type { CampoFormulario, MaterialModulo, Modulo } from '../../types';
 import { gerarIdCampo } from '../../lib/edicoesModulos';
+
+const TAMANHO_MAXIMO_MATERIAL = 8 * 1024 * 1024; // 8 MB — limite prático para caber no localStorage
+
+function formatarTamanho(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 interface EditorModuloModalProps {
   modulo: Modulo;
@@ -31,6 +39,26 @@ export default function EditorModuloModal({
   const [campos, setCampos] = useState<CampoEditavel[]>(
     modulo.tipo === 'formulario' ? modulo.campos.map(campoParaEditavel) : [],
   );
+  const [material, setMaterial] = useState<MaterialModulo | undefined>(modulo.material);
+  const [erroMaterial, setErroMaterial] = useState('');
+
+  function handleSelecionarArquivo(e: ChangeEvent<HTMLInputElement>) {
+    const arquivo = e.target.files?.[0];
+    e.target.value = '';
+    if (!arquivo) return;
+
+    if (arquivo.size > TAMANHO_MAXIMO_MATERIAL) {
+      setErroMaterial(`Arquivo muito grande (${formatarTamanho(arquivo.size)}). O limite é ${formatarTamanho(TAMANHO_MAXIMO_MATERIAL)}.`);
+      return;
+    }
+
+    setErroMaterial('');
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      setMaterial({ nome: arquivo.name, tipoArquivo: arquivo.type || 'application/octet-stream', dadosUrl: String(leitor.result) });
+    };
+    leitor.readAsDataURL(arquivo);
+  }
 
   function atualizarCampo(indice: number, dados: Partial<CampoEditavel>) {
     setCampos((atual) => atual.map((c, i) => (i === indice ? { ...c, ...dados } : c)));
@@ -69,6 +97,8 @@ export default function EditorModuloModal({
         ? { ...modulo, titulo: titulo.trim(), descricao: descricao.trim(), pergunta: pergunta.trim(), campos: camposFinal }
         : { ...modulo, titulo: titulo.trim(), descricao: descricao.trim(), pergunta: pergunta.trim() };
 
+    moduloEditado.material = material;
+
     onSalvar(moduloEditado);
   }
 
@@ -103,6 +133,21 @@ export default function EditorModuloModal({
         <div className="campo">
           <label>Pergunta / instrução principal</label>
           <textarea rows={2} value={pergunta} onChange={(e) => setPergunta(e.target.value)} />
+        </div>
+
+        <div className="campo">
+          <label>Material de apoio (arquivo opcional)</label>
+          {material ? (
+            <div className="material-anexo-linha">
+              <span>📎 {material.nome}</span>
+              <button type="button" className="btn btn-ghost btn-pequeno" onClick={() => setMaterial(undefined)}>
+                Remover
+              </button>
+            </div>
+          ) : (
+            <input type="file" onChange={handleSelecionarArquivo} />
+          )}
+          {erroMaterial && <div className="erro" style={{ display: 'block' }}>{erroMaterial}</div>}
         </div>
 
         {modulo.tipo === 'formulario' && (

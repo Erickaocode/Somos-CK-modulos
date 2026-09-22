@@ -20,12 +20,20 @@ export interface AreaRodaVida {
   reflexao: string;
 }
 
+export interface MaterialModulo {
+  nome: string;
+  tipoArquivo: string;
+  dadosUrl: string;
+}
+
 interface ModuloBase {
   id: string;
   atoId: string;
   titulo: string;
   descricao: string;
   pergunta: string;
+  /** Arquivo de apoio (PDF, imagem etc.) anexado pelo admin para este módulo. */
+  material?: MaterialModulo;
 }
 
 export interface ModuloTexto extends ModuloBase {

@@ -175,4 +175,12 @@ export const MODULOS: Modulo[] = [
       },
     ],
   },
+  {
+    id: 'material-ato-3',
+    atoId: 'ato-3',
+    titulo: 'Material de Apoio - Seu Mapa',
+    descricao: 'Conteúdo de apoio para esta etapa. Confira o material disponibilizado pela equipe.',
+    pergunta: 'Depois de conferir o material, escreva um breve resumo do que você aprendeu.',
+    tipo: 'texto',
+  },
 ];

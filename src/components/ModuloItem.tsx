@@ -117,6 +117,17 @@ export default function ModuloItem({ modulo, numero, respostaExistente, onSalvar
       <div className="modulo-corpo">
         <p className="modulo-pergunta">{modulo.pergunta}</p>
 
+        {modulo.material && (
+          <a
+            className="material-anexo-link"
+            href={modulo.material.dadosUrl}
+            download={modulo.material.nome}
+            onClick={(e) => e.stopPropagation()}
+          >
+            📎 Baixar material: {modulo.material.nome}
+          </a>
+        )}
+
         {renderCorpo()}
 
         {mostraBotaoEditar && (
