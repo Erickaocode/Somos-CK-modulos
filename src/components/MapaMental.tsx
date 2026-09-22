@@ -141,6 +141,11 @@ export default function MapaMental({ atos, modulos, historico }: MapaMentalProps
                 <span className="mapa-no-tag">
                   {semModulos ? 'Em breve' : `${progresso.concluidos}/${progresso.total} concluídos`}
                 </span>
+                {!semModulos && (
+                  <span className="mapa-no-barra">
+                    <span className="mapa-no-barra-preenchida" style={{ width: `${progresso.pct}%` }} />
+                  </span>
+                )}
                 {!semModulos && <span className={`mapa-seta${expandido ? ' expandido' : ''}`}>▾</span>}
               </button>
 
