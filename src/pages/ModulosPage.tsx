@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModulosView from '../components/ModulosView';
-import { ATOS, MODULOS } from '../data/modulos';
-import { aplicarEdicoes } from '../lib/edicoesModulos';
+import { obterAtosCompletos, obterModulosCompletos } from '../lib/edicoesModulos';
 import { encerrarSessao, obterRespostasDoJovem, obterSessao, salvarResposta } from '../lib/storage';
 import type { Sessao } from '../types';
 
@@ -19,7 +18,8 @@ export default function ModulosPage() {
 
   if (!sessao) return null;
 
-  const modulos = aplicarEdicoes(MODULOS);
+  const atos = obterAtosCompletos();
+  const modulos = obterModulosCompletos();
   const historico = obterRespostasDoJovem(sessao.cpf);
 
   function handleSalvar(moduloId: string, texto: string) {
@@ -34,7 +34,7 @@ export default function ModulosPage() {
 
   return (
     <ModulosView
-      atos={ATOS}
+      atos={atos}
       modulos={modulos}
       historico={historico}
       nome={sessao.nome}

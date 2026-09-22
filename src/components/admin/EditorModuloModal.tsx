@@ -13,9 +13,11 @@ function formatarTamanho(bytes: number): string {
 interface EditorModuloModalProps {
   modulo: Modulo;
   temEdicaoSalva: boolean;
+  modoNovo?: boolean;
   onFechar: () => void;
   onSalvar: (modulo: Modulo) => void;
   onRestaurarPadrao: () => void;
+  onExcluir?: () => void;
 }
 
 interface CampoEditavel extends CampoFormulario {
@@ -29,9 +31,11 @@ function campoParaEditavel(campo: CampoFormulario): CampoEditavel {
 export default function EditorModuloModal({
   modulo,
   temEdicaoSalva,
+  modoNovo,
   onFechar,
   onSalvar,
   onRestaurarPadrao,
+  onExcluir,
 }: EditorModuloModalProps) {
   const [titulo, setTitulo] = useState(modulo.titulo);
   const [descricao, setDescricao] = useState(modulo.descricao);
@@ -114,8 +118,8 @@ export default function EditorModuloModal({
       <div className="modal modal-editor">
         <div className="modal-topo">
           <div>
-            <h2>Editar módulo</h2>
-            <p>{modulo.titulo}</p>
+            <h2>{modoNovo ? 'Novo módulo' : 'Editar módulo'}</h2>
+            <p>{modulo.titulo || 'Preencha os campos abaixo'}</p>
           </div>
           <button className="fechar-modal" onClick={onFechar}>
             ×
@@ -207,8 +211,19 @@ export default function EditorModuloModal({
               Restaurar padrão
             </button>
           )}
+          {onExcluir && !modoNovo && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-pequeno btn-perigo"
+              onClick={() => {
+                if (confirm('Excluir este módulo? Essa ação não pode ser desfeita.')) onExcluir();
+              }}
+            >
+              Excluir módulo
+            </button>
+          )}
           <button type="button" className="btn btn-primario btn-pequeno" disabled={!podeSalvar} onClick={handleSalvar}>
-            Salvar alterações
+            {modoNovo ? 'Criar módulo' : 'Salvar alterações'}
           </button>
         </div>
       </div>

@@ -4,8 +4,7 @@ import StatCard from '../components/admin/StatCard';
 import JovensTable, { type JovemComProgresso } from '../components/admin/JovensTable';
 import DetalheModal from '../components/admin/DetalheModal';
 import DashboardGraficos from '../components/admin/DashboardGraficos';
-import { ATOS, MODULOS } from '../data/modulos';
-import { aplicarEdicoes } from '../lib/edicoesModulos';
+import { obterAtosCompletos, obterModulosCompletos } from '../lib/edicoesModulos';
 import { obterJovensUnicos, obterUltimoAcesso } from '../lib/storage';
 import { proximoModuloPendente } from '../lib/atos';
 import { obterTipoParticipante } from '../lib/desejos';
@@ -14,7 +13,8 @@ import { baixarArquivo, gerarCsvRespostas } from '../lib/exportar';
 
 export default function AdminPage() {
   const jovens = useMemo(() => obterJovensUnicos(), []);
-  const modulos = useMemo(() => aplicarEdicoes(MODULOS), []);
+  const atos = useMemo(() => obterAtosCompletos(), []);
+  const modulos = useMemo(() => obterModulosCompletos(), []);
   const [busca, setBusca] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
   const [cpfSelecionado, setCpfSelecionado] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function AdminPage() {
   const jovemSelecionado = jovens.find((j) => j.cpf === cpfSelecionado) ?? null;
 
   function handleExportar() {
-    const csv = gerarCsvRespostas(filtrados, modulos, ATOS);
+    const csv = gerarCsvRespostas(filtrados, modulos, atos);
     const data = new Date().toISOString().slice(0, 10);
     baixarArquivo(csv, `respostas-plano-de-vida-${data}.csv`, 'text/csv;charset=utf-8;');
   }

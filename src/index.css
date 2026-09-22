@@ -261,6 +261,10 @@ button {
   color: var(--cinza-700);
   border: 1.5px solid var(--cinza-200);
 }
+.btn-perigo {
+  color: var(--coral);
+  border-color: var(--coral);
+}
 .btn-pequeno {
   padding: 8px 14px;
   font-size: 13px;
@@ -1234,7 +1238,76 @@ table.tabela-jovens tr:hover td {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--roxo-700);
+}
+
+.editor-ato-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 12px;
+}
+
+.editor-ato-vazio {
+  font-size: 13px;
+  color: var(--cinza-400);
+  padding: 8px 0;
+}
+
+.novo-ato-linha {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.novo-ato-linha input {
+  flex: 1;
+  padding: 11px 13px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.novo-ato-linha input:focus {
+  outline: none;
+  border-color: var(--roxo-600);
+}
+
+.novo-modulo-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cinza-200);
+}
+
+.novo-modulo-linha input[type='text'] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 13px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+
+.novo-modulo-linha select {
+  padding: 10px 13px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-family: inherit;
+  background: var(--branco);
+}
+
+.novo-modulo-linha input[type='text']:focus,
+.novo-modulo-linha select:focus {
+  outline: none;
+  border-color: var(--roxo-600);
 }
 
 .editor-modulo-linha {

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModulosView from '../components/ModulosView';
-import { ATOS, MODULOS } from '../data/modulos';
-import { aplicarEdicoes } from '../lib/edicoesModulos';
+import { obterAtosCompletos, obterModulosCompletos } from '../lib/edicoesModulos';
 import type { Resposta } from '../types';
 
 const CPF_PREVIEW = '000.000.000-00';
@@ -11,7 +10,8 @@ const CPF_PREVIEW = '000.000.000-00';
 export default function PreviewModulosPage() {
   const navigate = useNavigate();
   const [historico, setHistorico] = useState<Resposta[]>([]);
-  const modulos = aplicarEdicoes(MODULOS);
+  const atos = obterAtosCompletos();
+  const modulos = obterModulosCompletos();
 
   function handleSalvar(moduloId: string, texto: string) {
     setHistorico((atual) => [
@@ -22,7 +22,7 @@ export default function PreviewModulosPage() {
 
   return (
     <ModulosView
-      atos={ATOS}
+      atos={atos}
       modulos={modulos}
       historico={historico}
       nome="Pré-visualização"
