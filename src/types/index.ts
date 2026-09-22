@@ -99,6 +99,12 @@ export interface Sessao {
   cpf: string;
 }
 
+export interface Acesso {
+  nome: string;
+  cpf: string;
+  data: string;
+}
+
 export interface Jovem {
   nome: string;
   cpf: string;

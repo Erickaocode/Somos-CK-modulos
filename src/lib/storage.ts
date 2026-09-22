@@ -8,10 +8,11 @@
    resposta, data) para facilitar essa troca futura.
    ============================================================ */
 
-import type { Jovem, Resposta, Sessao } from '../types';
+import type { Acesso, Jovem, Resposta, Sessao } from '../types';
 
 const CHAVE_RESPOSTAS = 'fichario_respostas_v1';
 const CHAVE_SESSAO = 'fichario_sessao_v1';
+const CHAVE_ACESSOS = 'fichario_acessos_v1';
 
 /* ---------- Sessão do jovem ---------- */
 export function salvarSessao(nome: string, cpf: string): void {
@@ -61,6 +62,31 @@ export function obterRespostasDoJovem(cpf: string): Resposta[] {
   return obterTodasRespostas()
     .filter((r) => r.cpf === cpf)
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+}
+
+/* ---------- Acessos (log de entradas) ---------- */
+export function registrarAcesso(nome: string, cpf: string): void {
+  const acessos = obterTodosAcessos();
+  acessos.push({ nome, cpf, data: new Date().toISOString() });
+  localStorage.setItem(CHAVE_ACESSOS, JSON.stringify(acessos));
+}
+
+export function obterTodosAcessos(): Acesso[] {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE_ACESSOS) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+export function obterAcessosDoJovem(cpf: string): Acesso[] {
+  return obterTodosAcessos()
+    .filter((a) => a.cpf === cpf)
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+}
+
+export function obterUltimoAcesso(cpf: string): Acesso | null {
+  return obterAcessosDoJovem(cpf)[0] ?? null;
 }
 
 export function obterJovensUnicos(): Jovem[] {

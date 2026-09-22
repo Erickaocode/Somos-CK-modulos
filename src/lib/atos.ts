@@ -44,3 +44,8 @@ export function moduloBloqueado(
   }
   return false;
 }
+
+/** Primeiro módulo (na ordem de `modulos`) que o jovem ainda não respondeu — "onde ele parou". Null = concluiu tudo. */
+export function proximoModuloPendente(modulos: Modulo[], historico: Resposta[]): Modulo | null {
+  return modulos.find((m) => !historico.some((r) => r.moduloId === m.id)) ?? null;
+}

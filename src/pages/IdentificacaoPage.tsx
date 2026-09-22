@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cpfValido, formatarCPF } from '../lib/cpf';
-import { obterSessao, salvarSessao, semearDadosDemo } from '../lib/storage';
+import { obterSessao, registrarAcesso, salvarSessao, semearDadosDemo } from '../lib/storage';
 
 export default function IdentificacaoPage() {
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ export default function IdentificacaoPage() {
     if (!nomeValido || !cpfOk) return;
 
     salvarSessao(nome.trim(), cpf);
+    registrarAcesso(nome.trim(), cpf);
     semearDadosDemo();
     navigate('/modulos');
   }

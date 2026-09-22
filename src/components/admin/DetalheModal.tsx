@@ -1,6 +1,7 @@
 import type { Jovem, Modulo } from '../../types';
 import { mascararCPF } from '../../lib/cpf';
 import { formatarData } from '../../lib/format';
+import { obterAcessosDoJovem } from '../../lib/storage';
 import RespostaResumo from '../RespostaResumo';
 
 interface DetalheModalProps {
@@ -14,6 +15,7 @@ export default function DetalheModal({ jovem, modulos, onFechar }: DetalheModalP
   const respostasOrdenadas = jovem
     ? jovem.respostas.slice().sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
     : [];
+  const acessos = jovem ? obterAcessosDoJovem(jovem.cpf) : [];
 
   return (
     <div
@@ -32,6 +34,18 @@ export default function DetalheModal({ jovem, modulos, onFechar }: DetalheModalP
             ×
           </button>
         </div>
+        {acessos.length > 0 && (
+          <div className="acessos-bloco">
+            <div className="acessos-titulo">Histórico de acessos ({acessos.length})</div>
+            <div className="acessos-lista">
+              {acessos.map((a, i) => (
+                <span className="acesso-item" key={`${a.data}-${i}`}>
+                  {formatarData(a.data)}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <div>
           {respostasOrdenadas.map((r) => {
             const modulo = modulos.find((m) => m.id === r.moduloId);

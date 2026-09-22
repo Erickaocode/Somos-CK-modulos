@@ -917,6 +917,11 @@ button {
   font-size: 13.5px;
 }
 
+.admin-header .btn {
+  width: auto;
+  flex-shrink: 0;
+}
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -1076,10 +1081,116 @@ table.tabela-jovens tr:hover td {
   border-radius: 10px;
   font-size: 13.5px;
   width: 260px;
-  margin-bottom: 16px;
 }
 
 .busca:focus {
   outline: none;
   border-color: var(--roxo-600);
+}
+
+.filtros-linha {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filtro-select {
+  padding: 10px 14px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--cinza-900);
+  background: var(--branco);
+}
+
+.filtro-select:focus {
+  outline: none;
+  border-color: var(--roxo-600);
+}
+
+.tabela-scroll {
+  overflow-x: auto;
+}
+
+/* ---------- Dashboard (gráficos) ---------- */
+.dashboard-graficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.grafico-card {
+  padding: 18px 20px;
+}
+
+.grafico-titulo {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--cinza-900);
+  margin-bottom: 8px;
+}
+
+.grafico-vazio {
+  font-size: 13px;
+  color: var(--cinza-400);
+  padding: 40px 0;
+  text-align: center;
+  margin: 0;
+}
+
+.grafico-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--cinza-700);
+}
+
+.legenda-cor {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* ---------- Histórico de acessos (admin) ---------- */
+.acessos-bloco {
+  border: 1px solid var(--cinza-200);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: var(--cinza-100);
+}
+
+.acessos-titulo {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--cinza-700);
+  margin-bottom: 8px;
+}
+
+.acessos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 84px;
+  overflow-y: auto;
+}
+
+.acesso-item {
+  font-size: 11.5px;
+  color: var(--cinza-700);
+  background: var(--branco);
+  border: 1px solid var(--cinza-200);
+  border-radius: 100px;
+  padding: 3px 10px;
 }
