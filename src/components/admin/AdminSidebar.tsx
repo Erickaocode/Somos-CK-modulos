@@ -18,7 +18,7 @@ export default function AdminSidebar() {
         <Link to="/admin/modulos" className={pathname === '/admin/modulos' ? 'active' : ''}>
           Editar Módulos
         </Link>
-        <Link to="/admin/preview">👁️ Pré-visualizar área do jovem</Link>
+        <Link to="/admin/preview">Pré-visualizar área do jovem</Link>
       </nav>
     </div>
   );
