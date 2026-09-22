@@ -9,8 +9,7 @@ export default function Topbar({ nome, onSair }: TopbarProps) {
   return (
     <div className="topbar">
       <div className="topbar-brand">
-        <span className="logo-dot" />
-        Plano de vida
+        <span className="marca-texto">Plano de vida</span>
       </div>
       <div className="topbar-nav">
         <a href="#" className="active" onClick={(e) => e.preventDefault()}>

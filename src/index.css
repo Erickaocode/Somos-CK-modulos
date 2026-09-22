@@ -65,16 +65,16 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
-  font-size: 15px;
 }
 
-.topbar-brand .logo-dot {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+.marca-texto {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.01em;
   background: linear-gradient(135deg, var(--roxo-600), var(--coral));
-  display: inline-block;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .topbar-nav {
