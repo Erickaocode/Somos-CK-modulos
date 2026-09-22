@@ -33,6 +33,12 @@ function ponto(anguloGraus: number, raio: number, origem: Ponto = { x: 50, y: 50
   return { x: origem.x + raio * Math.cos(rad), y: origem.y + raio * Math.sin(rad) };
 }
 
+// No balão do mapa mostramos só "Ato 1", sem o sufixo repetido ("— Seu Mapa")
+// que já aparece no cabeçalho da lista de módulos.
+function tituloResumido(titulo: string): string {
+  return titulo.split('—')[0].trim();
+}
+
 // Afasta cada módulo do ângulo do próprio Ato (nunca alinhado com ele, senão
 // ficaria colado ao nó do Ato) e usa um deslocamento diferente por módulo
 // (não espelhado aos pares) para que as linhas nunca fiquem retas/alinhadas
@@ -137,7 +143,7 @@ export default function MapaMental({ atos, modulos, historico }: MapaMentalProps
                 className={`mapa-no-ato${expandido ? ' expandido' : ''}`}
                 onClick={() => alternarAto(ato.id, semModulos)}
               >
-                <span className="mapa-no-titulo">{ato.titulo}</span>
+                <span className="mapa-no-titulo">{tituloResumido(ato.titulo)}</span>
                 <span className="mapa-no-tag">
                   {semModulos ? 'Em breve' : `${progresso.concluidos}/${progresso.total} concluídos`}
                 </span>
