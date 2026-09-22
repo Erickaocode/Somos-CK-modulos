@@ -1,0 +1,172 @@
+import { useState } from 'react';
+import type { CampoFormulario, Modulo } from '../../types';
+import { gerarIdCampo } from '../../lib/edicoesModulos';
+
+interface EditorModuloModalProps {
+  modulo: Modulo;
+  temEdicaoSalva: boolean;
+  onFechar: () => void;
+  onSalvar: (modulo: Modulo) => void;
+  onRestaurarPadrao: () => void;
+}
+
+interface CampoEditavel extends CampoFormulario {
+  opcoesTexto: string;
+}
+
+function campoParaEditavel(campo: CampoFormulario): CampoEditavel {
+  return { ...campo, opcoesTexto: (campo.opcoes ?? []).join('\n') };
+}
+
+export default function EditorModuloModal({
+  modulo,
+  temEdicaoSalva,
+  onFechar,
+  onSalvar,
+  onRestaurarPadrao,
+}: EditorModuloModalProps) {
+  const [titulo, setTitulo] = useState(modulo.titulo);
+  const [descricao, setDescricao] = useState(modulo.descricao);
+  const [pergunta, setPergunta] = useState(modulo.pergunta);
+  const [campos, setCampos] = useState<CampoEditavel[]>(
+    modulo.tipo === 'formulario' ? modulo.campos.map(campoParaEditavel) : [],
+  );
+
+  function atualizarCampo(indice: number, dados: Partial<CampoEditavel>) {
+    setCampos((atual) => atual.map((c, i) => (i === indice ? { ...c, ...dados } : c)));
+  }
+
+  function removerCampo(indice: number) {
+    setCampos((atual) => atual.filter((_, i) => i !== indice));
+  }
+
+  function adicionarCampo() {
+    setCampos((atual) => [...atual, { id: '', label: '', tipo: 'texto', opcoesTexto: '' }]);
+  }
+
+  function handleSalvar() {
+    const idsExistentes = campos.filter((c) => c.id).map((c) => c.id);
+    const camposFinal: CampoFormulario[] = campos
+      .filter((c) => c.label.trim())
+      .map((c) => {
+        const id = c.id || gerarIdCampo(c.label, idsExistentes);
+        if (!c.id) idsExistentes.push(id);
+        const campoFinal: CampoFormulario = { id, label: c.label.trim(), tipo: c.tipo };
+        if (c.tipo !== 'texto') {
+          campoFinal.opcoes = c.opcoesTexto
+            .split('\n')
+            .map((o) => o.trim())
+            .filter(Boolean);
+        }
+        if (c.tipo === 'multi-select' && c.maximoSelecoes) {
+          campoFinal.maximoSelecoes = c.maximoSelecoes;
+        }
+        return campoFinal;
+      });
+
+    const moduloEditado: Modulo =
+      modulo.tipo === 'formulario'
+        ? { ...modulo, titulo: titulo.trim(), descricao: descricao.trim(), pergunta: pergunta.trim(), campos: camposFinal }
+        : { ...modulo, titulo: titulo.trim(), descricao: descricao.trim(), pergunta: pergunta.trim() };
+
+    onSalvar(moduloEditado);
+  }
+
+  const podeSalvar = titulo.trim() !== '' && descricao.trim() !== '' && pergunta.trim() !== '';
+
+  return (
+    <div
+      className="overlay visivel"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onFechar();
+      }}
+    >
+      <div className="modal modal-editor">
+        <div className="modal-topo">
+          <div>
+            <h2>Editar módulo</h2>
+            <p>{modulo.titulo}</p>
+          </div>
+          <button className="fechar-modal" onClick={onFechar}>
+            ×
+          </button>
+        </div>
+
+        <div className="campo">
+          <label>Título</label>
+          <input type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+        </div>
+        <div className="campo">
+          <label>Descrição (mostrada na listagem)</label>
+          <textarea rows={2} value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        </div>
+        <div className="campo">
+          <label>Pergunta / instrução principal</label>
+          <textarea rows={2} value={pergunta} onChange={(e) => setPergunta(e.target.value)} />
+        </div>
+
+        {modulo.tipo === 'formulario' && (
+          <div className="campos-editor-lista">
+            <div className="campos-editor-titulo">Perguntas do formulário</div>
+
+            {campos.map((campo, i) => (
+              <div className="campo-formulario-editor" key={i}>
+                <input
+                  type="text"
+                  placeholder="Texto da pergunta"
+                  value={campo.label}
+                  onChange={(e) => atualizarCampo(i, { label: e.target.value })}
+                />
+                <div className="linha-tipo">
+                  <select
+                    value={campo.tipo}
+                    onChange={(e) => atualizarCampo(i, { tipo: e.target.value as CampoFormulario['tipo'] })}
+                  >
+                    <option value="texto">Resposta em texto</option>
+                    <option value="select">Escolher 1 opção</option>
+                    <option value="multi-select">Escolher várias opções</option>
+                  </select>
+                  {campo.tipo === 'multi-select' && (
+                    <input
+                      type="number"
+                      min={1}
+                      placeholder="Máx. de opções"
+                      value={campo.maximoSelecoes ?? ''}
+                      onChange={(e) => atualizarCampo(i, { maximoSelecoes: Number(e.target.value) || undefined })}
+                    />
+                  )}
+                  <button type="button" className="btn btn-ghost btn-pequeno" onClick={() => removerCampo(i)}>
+                    Remover
+                  </button>
+                </div>
+                {campo.tipo !== 'texto' && (
+                  <textarea
+                    rows={2}
+                    placeholder="Uma opção por linha"
+                    value={campo.opcoesTexto}
+                    onChange={(e) => atualizarCampo(i, { opcoesTexto: e.target.value })}
+                  />
+                )}
+              </div>
+            ))}
+
+            <button type="button" className="btn btn-secundario btn-pequeno" onClick={adicionarCampo}>
+              + Adicionar pergunta
+            </button>
+          </div>
+        )}
+
+        <div className="editor-acoes">
+          {temEdicaoSalva && (
+            <button type="button" className="btn btn-ghost btn-pequeno" onClick={onRestaurarPadrao}>
+              Restaurar padrão
+            </button>
+          )}
+          <button type="button" className="btn btn-primario btn-pequeno" disabled={!podeSalvar} onClick={handleSalvar}>
+            Salvar alterações
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

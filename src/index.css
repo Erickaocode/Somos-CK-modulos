@@ -192,7 +192,8 @@ button {
 }
 
 .campo input,
-.campo select {
+.campo select,
+.campo textarea {
   width: 100%;
   padding: 11px 13px;
   border: 1.5px solid var(--cinza-200);
@@ -201,10 +202,12 @@ button {
   font-family: inherit;
   background: var(--branco);
   transition: border-color 0.15s;
+  resize: vertical;
 }
 
 .campo input:focus,
-.campo select:focus {
+.campo select:focus,
+.campo textarea:focus {
   outline: none;
   border-color: var(--roxo-600);
 }
@@ -1193,4 +1196,151 @@ table.tabela-jovens tr:hover td {
   border: 1px solid var(--cinza-200);
   border-radius: 100px;
   padding: 3px 10px;
+}
+
+/* ---------- Editor de módulos (admin) ---------- */
+.editor-ato-bloco {
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.editor-ato-titulo {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--roxo-700);
+  margin-bottom: 12px;
+}
+
+.editor-modulo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--cinza-200);
+}
+
+.editor-modulo-linha:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.editor-modulo-titulo {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-modulo-descricao {
+  font-size: 12.5px;
+  color: var(--cinza-700);
+  margin-top: 2px;
+}
+
+.badge-editado {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--roxo-100);
+  color: var(--roxo-700);
+}
+
+.modal-editor {
+  max-width: 640px;
+}
+
+.campos-editor-lista {
+  margin: 20px 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--cinza-200);
+}
+
+.campos-editor-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cinza-700);
+  margin-bottom: 12px;
+}
+
+.campo-formulario-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 12px;
+  border: 1px solid var(--cinza-200);
+  border-radius: 10px;
+  background: var(--cinza-100);
+}
+
+.campo-formulario-editor input,
+.campo-formulario-editor select,
+.campo-formulario-editor textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1.5px solid var(--cinza-200);
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  background: var(--branco);
+  resize: vertical;
+}
+
+.campo-formulario-editor .linha-tipo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.campo-formulario-editor .linha-tipo select {
+  flex: 1;
+}
+
+.campo-formulario-editor .linha-tipo input {
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.campo-formulario-editor .linha-tipo .btn {
+  width: auto;
+  flex-shrink: 0;
+}
+
+.editor-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cinza-200);
+}
+
+.editor-acoes .btn {
+  width: auto;
+}
+
+/* ---------- Prévia da área do jovem (admin) ---------- */
+.preview-faixa {
+  background: var(--amarelo);
+  color: var(--roxo-900);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.preview-faixa .btn {
+  width: auto;
+  flex-shrink: 0;
+  background: var(--roxo-900);
+  color: var(--branco);
+  border: none;
 }

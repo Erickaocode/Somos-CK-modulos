@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function AdminSidebar() {
+  const { pathname } = useLocation();
+
   return (
     <div className="admin-sidebar">
       <span className="logo-dot" />
@@ -10,10 +12,13 @@ export default function AdminSidebar() {
         <small style={{ opacity: 0.6 }}>Área administrativa</small>
       </h2>
       <nav className="admin-nav">
-        <a href="#" className="active" onClick={(e) => e.preventDefault()}>
+        <Link to="/admin" className={pathname === '/admin' ? 'active' : ''}>
           Jovens &amp; Respostas
-        </a>
-        <Link to="/">← Voltar à área do jovem</Link>
+        </Link>
+        <Link to="/admin/modulos" className={pathname === '/admin/modulos' ? 'active' : ''}>
+          Editar Módulos
+        </Link>
+        <Link to="/admin/preview">👁️ Pré-visualizar área do jovem</Link>
       </nav>
     </div>
   );

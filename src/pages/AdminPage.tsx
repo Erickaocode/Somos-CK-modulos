@@ -5,6 +5,7 @@ import JovensTable, { type JovemComProgresso } from '../components/admin/JovensT
 import DetalheModal from '../components/admin/DetalheModal';
 import DashboardGraficos from '../components/admin/DashboardGraficos';
 import { ATOS, MODULOS } from '../data/modulos';
+import { aplicarEdicoes } from '../lib/edicoesModulos';
 import { obterJovensUnicos, obterUltimoAcesso } from '../lib/storage';
 import { proximoModuloPendente } from '../lib/atos';
 import { obterTipoParticipante } from '../lib/desejos';
@@ -13,11 +14,12 @@ import { baixarArquivo, gerarCsvRespostas } from '../lib/exportar';
 
 export default function AdminPage() {
   const jovens = useMemo(() => obterJovensUnicos(), []);
+  const modulos = useMemo(() => aplicarEdicoes(MODULOS), []);
   const [busca, setBusca] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
   const [cpfSelecionado, setCpfSelecionado] = useState<string | null>(null);
 
-  const totalModulos = MODULOS.length;
+  const totalModulos = modulos.length;
   const totalRespostas = jovens.reduce((soma, j) => soma + j.respostas.length, 0);
   const completos = jovens.filter((j) => j.respostas.length >= totalModulos).length;
 
@@ -26,10 +28,10 @@ export default function AdminPage() {
       jovens.map((jovem) => ({
         ...jovem,
         tipoParticipante: obterTipoParticipante(jovem.respostas),
-        proximoModulo: proximoModuloPendente(MODULOS, jovem.respostas),
+        proximoModulo: proximoModuloPendente(modulos, jovem.respostas),
         ultimoAcesso: obterUltimoAcesso(jovem.cpf)?.data ?? null,
       })),
-    [jovens],
+    [jovens, modulos],
   );
 
   const filtrados = jovensComProgresso.filter((j) => {
@@ -41,7 +43,7 @@ export default function AdminPage() {
   const jovemSelecionado = jovens.find((j) => j.cpf === cpfSelecionado) ?? null;
 
   function handleExportar() {
-    const csv = gerarCsvRespostas(filtrados, MODULOS, ATOS);
+    const csv = gerarCsvRespostas(filtrados, modulos, ATOS);
     const data = new Date().toISOString().slice(0, 10);
     baixarArquivo(csv, `respostas-plano-de-vida-${data}.csv`, 'text/csv;charset=utf-8;');
   }
@@ -67,7 +69,7 @@ export default function AdminPage() {
           <StatCard valor={completos} rotulo="Concluíram todos os módulos" />
         </div>
 
-        <DashboardGraficos jovens={jovens} modulos={MODULOS} />
+        <DashboardGraficos jovens={jovens} modulos={modulos} />
 
         <div className="filtros-linha">
           <input
@@ -96,7 +98,7 @@ export default function AdminPage() {
         </p>
       </div>
 
-      <DetalheModal jovem={jovemSelecionado} modulos={MODULOS} onFechar={() => setCpfSelecionado(null)} />
+      <DetalheModal jovem={jovemSelecionado} modulos={modulos} onFechar={() => setCpfSelecionado(null)} />
     </div>
   );
 }

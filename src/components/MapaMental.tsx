@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import type { Modulo, Resposta } from '../types';
-import { ATOS, MODULOS } from '../data/modulos';
+import type { Ato, Modulo, Resposta } from '../types';
 import { atoBloqueado, moduloBloqueado, progressoDoAto } from '../lib/atos';
 import { trechoResposta } from '../lib/resumoResposta';
 import RespostaModal from './RespostaModal';
 
 interface MapaMentalProps {
+  atos: Ato[];
+  modulos: Modulo[];
   historico: Resposta[];
 }
 
@@ -53,12 +54,12 @@ function raioLocalSeguro(origem: Ponto, anguloGraus: number, desejado: number) {
   return Math.min(desejado, limiteX, limiteY);
 }
 
-export default function MapaMental({ historico }: MapaMentalProps) {
+export default function MapaMental({ atos, modulos, historico }: MapaMentalProps) {
   const [atoExpandido, setAtoExpandido] = useState<string | null>(null);
   const [avisoAtoId, setAvisoAtoId] = useState<string | null>(null);
   const [selecao, setSelecao] = useState<SelecaoModulo | null>(null);
 
-  const atosVisiveis = ATOS.filter((_, i) => !atoBloqueado(i, ATOS, MODULOS, historico));
+  const atosVisiveis = atos.filter((_, i) => !atoBloqueado(i, atos, modulos, historico));
   const anguloAtos = atosVisiveis.map((_, i) => -90 + i * (360 / atosVisiveis.length));
 
   function alternarAto(atoId: string, semModulos: boolean) {
@@ -71,7 +72,7 @@ export default function MapaMental({ historico }: MapaMentalProps) {
   }
 
   const indiceAtoExpandido = atoExpandido ? atosVisiveis.findIndex((a) => a.id === atoExpandido) : -1;
-  const modulosExpandidos = indiceAtoExpandido >= 0 ? MODULOS.filter((m) => m.atoId === atoExpandido) : [];
+  const modulosExpandidos = indiceAtoExpandido >= 0 ? modulos.filter((m) => m.atoId === atoExpandido) : [];
   const anguloAtoExpandido = indiceAtoExpandido >= 0 ? anguloAtos[indiceAtoExpandido] : 0;
   const pontoAtoExpandido = indiceAtoExpandido >= 0 ? ponto(anguloAtoExpandido, RAIO_ATO) : null;
 
@@ -123,8 +124,8 @@ export default function MapaMental({ historico }: MapaMentalProps) {
         </div>
 
         {atosVisiveis.map((ato, i) => {
-          const progresso = progressoDoAto(ato, MODULOS, historico);
-          const modulosDoAto = MODULOS.filter((m) => m.atoId === ato.id);
+          const progresso = progressoDoAto(ato, modulos, historico);
+          const modulosDoAto = modulos.filter((m) => m.atoId === ato.id);
           const semModulos = modulosDoAto.length === 0;
           const p = atoPontos[i];
           const expandido = atoExpandido === ato.id;
@@ -151,7 +152,7 @@ export default function MapaMental({ historico }: MapaMentalProps) {
         {modulosPosicionados.map(({ modulo, ponto: p }) => {
           const resposta = historico.find((r) => r.moduloId === modulo.id);
           const concluido = !!resposta;
-          const bloqueadoModulo = moduloBloqueado(modulo, MODULOS, historico, false);
+          const bloqueadoModulo = moduloBloqueado(modulo, modulos, historico, false);
 
           const statusIcone = bloqueadoModulo ? '🔒' : concluido ? '✓' : '○';
           const statusTitulo = bloqueadoModulo
