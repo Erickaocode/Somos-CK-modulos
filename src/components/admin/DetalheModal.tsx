@@ -1,5 +1,5 @@
 import type { Jovem, Modulo } from '../../types';
-import { mascararCPF } from '../../lib/cpf';
+import { formatarCPF } from '../../lib/cpf';
 import { formatarData } from '../../lib/format';
 import { obterAcessosDoJovem } from '../../lib/storage';
 import RespostaResumo from '../RespostaResumo';
@@ -28,7 +28,7 @@ export default function DetalheModal({ jovem, modulos, onFechar }: DetalheModalP
         <div className="modal-topo">
           <div>
             <h2>{jovem?.nome ?? '—'}</h2>
-            <p>{jovem ? mascararCPF(jovem.cpf) : '—'}</p>
+            <p>{jovem ? formatarCPF(jovem.cpf) : '—'}</p>
           </div>
           <button className="fechar-modal" onClick={onFechar}>
             ×

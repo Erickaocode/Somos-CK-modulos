@@ -1,5 +1,5 @@
 import type { Ato, Jovem, Modulo } from '../types';
-import { mascararCPF } from './cpf';
+import { formatarCPF } from './cpf';
 import { formatarData } from './format';
 import { textoCompletoResposta } from './resumoResposta';
 
@@ -23,7 +23,7 @@ export function gerarCsvRespostas(jovens: Jovem[], modulos: Modulo[], atos: Ato[
         const ato = modulo ? atos.find((a) => a.id === modulo.atoId) : undefined;
         linhas.push([
           jovem.nome,
-          mascararCPF(jovem.cpf),
+          formatarCPF(jovem.cpf),
           ato?.titulo ?? '',
           modulo?.titulo ?? r.moduloId,
           textoCompletoResposta(modulo, r),

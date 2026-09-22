@@ -1,5 +1,5 @@
 import type { Jovem, Modulo } from '../../types';
-import { mascararCPF } from '../../lib/cpf';
+import { formatarCPF } from '../../lib/cpf';
 import { formatarData } from '../../lib/format';
 
 export interface JovemComProgresso extends Jovem {
@@ -44,7 +44,7 @@ export default function JovensTable({ jovens, totalModulos, onVerRespostas }: Jo
               return (
                 <tr key={jovem.cpf}>
                   <td style={{ fontWeight: 600 }}>{jovem.nome}</td>
-                  <td>{mascararCPF(jovem.cpf)}</td>
+                  <td>{formatarCPF(jovem.cpf)}</td>
                   <td>{jovem.tipoParticipante ?? '—'}</td>
                   <td>
                     <span className={`badge-progresso${completo ? ' completo' : ''}`}>
